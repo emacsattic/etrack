@@ -1,0 +1,64 @@
+Welcome!
+--------
+
+        This directory contains ETRACK, a simple package to track
+        expenses: query, add, delete, update.  You can use ETRACK
+        from Emacs or from the command-line.
+
+
+Installation
+------------
+
+        Generic instructions are provided in file INSTALL.
+        For the impatient:
+
+          ./configure
+          make
+          make install
+
+        The "make install" step populates these dirs with these files:
+
+          ${bindir}                  -- etrack
+          ${infodir}                 -- etrack.info
+          ${datadir}/etrack          -- etrack.scm
+                                        etrack.el
+                                        example.etrack.conf
+                                        NEWS
+          ${datadir}/emacs/site-lisp -- etrack.el
+
+        Use "./configure --help" for info on how to change the default values
+	of ${bindir}, ${infodir} and ${datadir}, which are typically
+	/usr/local/bin, /usr/local/info and /usr/local/share, respectively.
+
+
+Dependencies
+------------
+
+        - PostgreSQL 7.x (x > 0)
+        - Emacs (default front-end, possible to use w/o)
+        - Guile 1.4.x
+        - modules from Guile 1.4.x
+	  - (database tmpfile)
+	  - (ice-9 accumulate)
+	  - (ice-9 common-list)
+	  - (ice-9 editing-buffer)
+	  - (ice-9 format)
+	  - (ice-9 gap-buffer)
+	  - (ice-9 rdelim)
+	  - (srfi srfi-13)
+	  - (srfi srfi-14)
+	- modules from Guile-PG 0.33 or later
+	  - (database postgres)
+	  - (database postgres-col-defs)
+	  - (database postgres-meta)
+	  - (database postgres-qcons)
+	  - (database postgres-resdisp)
+	  - (database postgres-resx)
+	  - (database postgres-table)
+  	  - (database postgres-types)
+
+
+Troubleshooting
+---------------
+
+        Send bug reports to <ttn@gnuvola.org>.

@@ -1,0 +1,13 @@
+;;; FOO.scm --- DO SOMETHING
+
+;; Copyright (C) 2009 Thien-Thi Nguyen
+;; This file is part of ETRACK, released under GNU GPL with
+;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
+
+(define-module (etrack))
+
+(define-command (FOO bar)               ; init=#f
+  ;; DO SOMETHING
+  )
+
+;;; FOO.scm ends here

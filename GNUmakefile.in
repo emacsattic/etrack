@@ -1,0 +1,144 @@
+# GNUmakefile for etrack
+
+# Copyright (C) 2001-2009 Thien-Thi Nguyen
+# This file is part of ETRACK, released under GNU GPL with
+# ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
+
+TARNAME		= @PACKAGE_TARNAME@
+VERSION		= @PACKAGE_VERSION@
+
+SHELL		= @SHELL@
+
+srcdir		= @srcdir@
+top_srcdir	= @top_srcdir@
+VPATH		= @srcdir@
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+
+bindir		= @bindir@
+infodir		= @infodir@
+datarootdir	= @datarootdir@
+datadir		= @datadir@
+lispdir		= @lispdir@
+
+INSTALL		= @INSTALL@
+INSTALL_SCRIPT	= @INSTALL_SCRIPT@
+INSTALL_DATA	= @INSTALL_DATA@
+
+mkinstalldirs	= $(top_srcdir)/install-sh -d
+
+#-----------------------------------------------------------------------------
+# Usage: make
+# Usage: make all
+
+all: pre-inst.etrack.scm
+
+pre-inst.etrack.scm: etrack.scm commands/format-specs.sed commands/*.scm
+	sed -f commands/format-specs.sed commands/*.scm > TMP
+	sed '/;; Add command specs here./r TMP' etrack.scm > $@
+	rm -f TMP
+
+#-----------------------------------------------------------------------------
+# Usage: make clean
+
+clean:
+	rm -f pre-inst.etrack.scm
+
+#-----------------------------------------------------------------------------
+# Usage: make docs
+# Create etrack.info from etrack.texi.
+
+docs: etrack.info etrack.html
+
+etrack.info: etrack.texi
+	makeinfo -o $@ $<
+
+etrack.html: etrack.texi
+	makeinfo -o $@ --html --no-split $<
+
+etrack.texi: version.texi bhelp.texi
+
+version.texi: $(srcdir)/configure
+	echo @set VERSION $(VERSION) > $@
+
+bhelp.texi: pre-inst.etrack.scm
+	guile -s pre-inst.etrack.scm --help > $@
+
+#-----------------------------------------------------------------------------
+# Usage: make help
+# Display some helpful information.
+
+help:
+	@echo 'Read GNUmakefile, or be adventurous, and try one of these:'
+	@grep '^# Usage:' GNUmakefile | sed 's/^..Usage://g'
+
+#-----------------------------------------------------------------------------
+# Usage: make check
+# This does nothing.
+
+check:
+	@echo '(nothing to be done for "$(MAKE) $@")'
+
+#-----------------------------------------------------------------------------
+# Usage: make install
+# This creates an installable version of etrack, etrack.el and etrack.scm, and
+# then copies them and other files to various places.
+
+retired = \
+  VERSION \
+  commands/rename-catcode-to-attcode.scm
+
+IOK = installable
+pkg-datadir = $(datadir)/etrack
+
+install:
+	for f in etrack etrack.el etrack.scm pre-inst.etrack.scm ; do \
+	  sed '/zonkme/d;s+/home/ttn/build+$(datadir)+g' $$f \
+	    > $(IOK).$$f ; done
+	mv $(IOK).pre-inst.etrack.scm $(IOK).etrack.scm
+	for f in etrack etrack.scm ; do				\
+	  sed 's/|VERSION|/$(VERSION)/' $(IOK).$$f > TMP ;	\
+	  mv TMP $(IOK).$$f ; done
+	$(mkinstalldirs) $(bindir) $(infodir) $(lispdir) $(pkg-datadir)
+	$(INSTALL_SCRIPT) $(IOK).etrack $(bindir)/etrack
+	$(INSTALL_DATA) $(IOK).etrack.el $(lispdir)/etrack.el
+	$(INSTALL_DATA) $(IOK).etrack.el $(pkg-datadir)/etrack.el
+	$(INSTALL_DATA) $(IOK).etrack.scm $(pkg-datadir)/etrack.scm
+	$(INSTALL_DATA) example.* NEWS $(pkg-datadir)
+	( cd $(pkg-datadir) && rm -f $(retired) )
+	$(RM) $(IOK).*
+	$(mkinstalldirs) $(pkg-datadir)/commands
+	for f in commands/*.scm ; do				\
+	  echo ' '$(INSTALL_DATA) $$f $(pkg-datadir)/$$f ;	\
+	  $(INSTALL_DATA) $$f $(pkg-datadir)/$$f ; done
+	$(INSTALL_DATA) etrack.info $(infodir)
+
+#-----------------------------------------------------------------------------
+# Usage: make dist
+# This creates ./TARNAME-VERSION.tar.gz, where TARNAME and VERSION
+# are determined at configuration time.
+
+dd = $(TARNAME)-$(VERSION)
+extradist = COPYING INSTALL aclocal.m4 modules.af.m4 \
+		configure install-sh etrack.info etrack.html
+minusdist = .gitignore
+
+dist: docs
+	@test -d .git || { echo ERROR: No .git subdir. ; false ; }
+	rm -rf $(dd) $(dd).tar.gz
+	mkdir $(dd)
+	cp -p --parents $(wildcard $(extradist)) \
+	  $(shell git ls-files $(addprefix -x , $(wildcard $(minusdist)))) \
+	  $(dd)
+	GZIP=--best tar czf $(dd).tar.gz $(dd)
+	rm -rf $(dd)
+
+#-----------------------------------------------------------------------------
+# Usage: make snapshot
+# This creates ../etrack-YYYYMMDD.tar.gz from the current directory.
+
+snapshot:
+	d=`date +"%Y%m%d"` ; cd .. ; \
+	GZIP=--best tar czf $(TARNAME)-$$d.tar.gz $(TARNAME)
+
+# GNUmakefile ends here

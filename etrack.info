@@ -1,0 +1,1175 @@
+This is etrack.info, produced by makeinfo version 4.11.96 from
+etrack.texi.
+
+This file documents the ETRACK program.
+
+Copyright 2002-2009 Thien-Thi Nguyen
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: etrack.info,  Node: Top,  Next: Setup,  Up: (dir)
+
+ETRACK
+******
+
+This document describes how to setup and use ETRACK, a package to track
+expenses: query, add, delete, update.
+
+This document applies to ETRACK 0.9911.
+
+* Menu:
+
+* Setup::               Preparing to use ETRACK.
+* Session::             Using ETRACK.
+* Diary Import::        Another way to use ETRACK.
+* Maintenance::         Administering ETRACK.
+* Design::              Innards of ETRACK.
+* License::             Your rights and freedoms.
+
+* Index::
+
+
+File: etrack.info,  Node: Setup,  Next: Session,  Prev: Top,  Up: Top
+
+1 Setup
+*******
+
+Setting up to use ETRACK can be viewed as more fun than actually using
+it, depending on your particular proclivities.  After installing
+ETRACK, you need to create a configuration file, and arrange for ETRACK
+users to set their `ETRACK_CONFIG' environment variable to point to
+this file.
+
+If someone else has already taken care of these things for you, feel
+free to skip to the next chapter which explains how to use ETRACK
+(*note Session::).
+
+* Menu:
+
+* Configuration file::
+* Database setup::
+* Environment::
+* Customization::
+
+
+File: etrack.info,  Node: Configuration file,  Next: Database setup,  Up: Setup
+
+1.1 Configuration file
+======================
+
+This section documents the configuration file, which is at the heart of
+the ETRACK setup.  The file contains directives describing the
+configuration name, which backend database to use, the expense
+attributes, and various flavors of queries.  Directives have the form
+of Scheme expressions with the `car' the name of the directive.
+
+Comments begin with semicolon (`;') and go to the end of the line.
+Additionally, you can comment-out a directive by quoting it with single
+quote before the opening parenthesis.
+
+The examples under this section are all taken from the example
+configuration file, which you might find easier to peruse directly,
+with the shell command `etrack --display-example-config'.
+
+* Menu:
+
+* name and database::
+* attributes::
+* query::
+
+
+File: etrack.info,  Node: name and database,  Next: attributes,  Up: Configuration file
+
+1.1.1 name and database
+-----------------------
+
+The `name' is a for-human-consumption string that identifies the
+configuration, while the `database' is the name of the PostgreSQL
+database used to actually keep the data.  The database name is not
+quoted.  For example:
+
+     (name     . "Example Expenses")
+     (database . etrack_example)
+
+
+File: etrack.info,  Node: attributes,  Next: query,  Prev: name and database,  Up: Configuration file
+
+1.1.2 attributes
+----------------
+
+The `attributes' directive defines the attributes which, in turn, define
+the attribute codes (also known as "attcodes").  Because attcodes are
+basically the first letters of the attribute names, you need to be
+somewhat careful not to define overlapping names.  For example:
+
+     (attributes . (vehicle
+                    household
+                    food
+                    utilities
+                    entertainment
+                    rent
+                    misc
+                    insurance))
+
+Here, the attcodes would be v, h, f, u, e, r, m and i.
+
+
+File: etrack.info,  Node: query,  Prev: attributes,  Up: Configuration file
+
+1.1.3 query
+-----------
+
+There are several flavors of query: simple, drill-down and custom.  The
+first two rely solely on the attribute codes.  By default, a simple
+query is created for each of the attributes, so you don't have to
+define them yourself.
+
+1.1.3.1 Simple Query
+....................
+
+The simple query has the form:
+
+     (query . (simple "DESCRIPTION" QUERY-CODE))
+     (query . (simple-list "DESC-1" Q-CODE-1 "DESC-2" Q-CODE-2 ...))
+
+where QUERY-CODE is "!!" for "all", or a series of attribute codes which
+are ANDed together.  If an attribute code is prefixed with "!", its
+sense is inverted.  The DESCRIPTIONS are short strings that describe
+the query, and may include embedded spaces.  For example:
+
+     (query . (simple-list
+               "all"                 !!
+               "all no rent"         !r
+               "eating out"          fe
+               "fun not food"        e!f
+               "food not fun"        f!e
+               ))
+
+1.1.3.2 Drill-Down Query
+........................
+
+The drill-down query has the form:
+
+     (query . (drill-down ATTRIBUTE (DETAILS ...)))
+     (query . (drill-down-list CAT-1 (DET-1 ...) CAT-2 (DET-2 ...) ...))
+
+where ATTRIBUTE is one of the defined attributes.  DETAILS is a list of
+strings that are searched in the first two slots of the `details'
+field.  The description for the query is formed like so: "ATTRIBUTE /
+DETAIL".  For example:
+
+     (query . (drill-down-list
+
+               utilities ("cable"
+                          "sdge"
+                          "phone")
+
+               vehicle ("gas"
+                        "car"
+                        "moto"
+                        "bike")))
+
+1.1.3.3 Custom Query
+....................
+
+Lastly, the custom query has the form:
+
+     (query . (custom "DESCRIPTION" QUERY-THUNK))
+
+where QUERY-THUNK is a Scheme procedure that takes no arguments and must
+finish with a query using either `select' (*note select:
+(guile-pg)Single-Table Abstraction.), or `one-row-table-query'.
+
+ -- Scheme Procedure: one-row-table-query labels vals
+     Return a result comprising two rows formed from LABELS and VALS.
+     This object satisfies `pg-result?'.
+
+You can use `one-row-table-query' to present arbitrary data in a way
+that etrack understands.  For example:
+
+     (query . (custom "sum of numbers from 0-10"
+                      (lambda ()
+                        (one-row-table-query
+                         `(,@(iota 11) sum)
+                         `(,@(iota 11) ,(apply + (iota 11))))))))
+
+The order of the query directives is preserved in the query menu during
+ETRACK operation (*note Query command::).
+
+
+File: etrack.info,  Node: Database setup,  Next: Environment,  Prev: Configuration file,  Up: Setup
+
+1.2 Database setup
+==================
+
+This section lists various shell commands to accomplish database related
+tasks.  Of primary importance in setup phase is creating a database and
+granting users access to it.  Before you do that, make sure the
+configuration file has at least the `database' field specified (*note
+Configuration file::).
+
+Creating a new database and initializing it:
+
+     etrack -b initdb
+
+Granting access to a user:
+
+     etrack -b grant USER
+
+Revoking access from a user:
+
+     etrack -b revoke USER
+
+*Note Maintenance::, for commands to use once ETRACK has been set up and
+is in regular use.
+
+
+File: etrack.info,  Node: Environment,  Next: Customization,  Prev: Database setup,  Up: Setup
+
+1.3 Environment
+===============
+
+The last setup step is to set the environment variable ETRACK_CONFIG to
+point to the the configuration file you created or modified, as
+described in the previous section (*note Configuration file::).
+Supposing you name this file /etc/etrack/cherry-lane.config, the
+following would work for Bourne shell and variants:
+
+     ETRACK_CONFIG=/etc/etrack/cherry-lane.config
+     export ETRACK_CONFIG
+
+And for csh and variants:
+
+     setenv ETRACK_CONFIG /etc/etrack/cherry-lane.config
+
+These fragments should be added to the appropriate shell initialization
+file for each user who is to have access to this configuration, or to
+the system shell initialization file if for all users.
+
+To specify more than one configuration file, separate each filename
+with a colon.  For example:
+
+     ETRACK_CONFIG=/etc/etrack/c1:/etc/etrack/c2:/etc/etrack/c3
+
+This example (in Bourne shell syntax) specifies three files `c1', `c2'
+and `c3', all in directory `/etc/etrack'.
+
+Another environment variable that the `etrack' executable consults is
+`EMACS'.  If unset, or if it has the value `t' (commonly the case when
+running ETRACK as a subprocess of Emacs), the default value is taken to
+be simply "emacs".
+
+
+File: etrack.info,  Node: Customization,  Prev: Environment,  Up: Setup
+
+1.4 Customization
+=================
+
+When ETRACK starts, it looks for file `~/.etrack.el' and loads it.  This
+allows you to customize the behavior of ETRACK (somewhat) and Emacs
+(more so).  Here is a complete example:
+
+     ;;; ~/.etrack.el --- configure the ETRACK user interface
+
+     (set-language-environment "Latin-1")
+
+     (blink-cursor-mode -1)
+     (fringe-mode 0)
+
+     (when (and window-system (member "etrack" command-line-args))
+       (set-face-background 'default "darkgreen")
+       (set-face-foreground 'default "cyan")
+       (set-face-foreground 'mode-line "white")
+       (set-face-background 'mode-line "black"))
+
+     ;;; ~/.etrack.el ends here
+
+This first sets the language environment so that `toggle-input-method'
+(normally bound to `C-\') works without asking you for the default input
+method; then continues to set up the display.
+
+The expression `(member "etrack" command-line-args)' is true when ETRACK
+is started from the shell, and false when started with `M-x etrack RET'
+in an already running Emacs session.
+
+
+File: etrack.info,  Node: Session,  Next: Diary Import,  Prev: Setup,  Up: Top
+
+2 Session
+*********
+
+There are two ways to start ETRACK:
+
+   * with the shell command `etrack'
+
+     A variant is `etrack -nw'.  If you are using a windowing system,
+     this command starts ETRACK in the current window instead of
+     creating another one (`nw' stands for "no window system").
+
+   * by typing `M-x etrack' into Emacs
+
+     If there is an already-active session, this simply selects the
+     ETRACK buffer instead of starting a new session.  In this case,
+     Emacs also displays `(Resuming already-active session)' in the
+     echo area.
+
+If you have more than one configuration specified, ETRACK asks you to
+choose one of them.  After this is decided, ETRACK clears the screen
+and displays the main menu:
+
+     Welcome to ETRACK for NAME!
+     Please report bugs to ttn.
+
+     === Page 1 ===
+
+     Choose a command by typing a number or letter:
+
+      (1) query
+
+      (2) add
+      (3) delete
+      (4) update
+      (5) prune duplicates
+
+      (t) add using template
+      (T) edit templates
+
+      (c) calendar
+      (m) mail session log
+      (a) about this program
+
+      (x) export data
+      (v) view mode
+
+      (q) quit
+
+     Your choice:
+
+Here, `NAME' is the name given in the configuration file referenced by
+the `ETRACK_CONFIG' env var (*note Environment::).
+
+Type 1, 2, 3 or 4, to query, add, delete, or update expense entries; or
+5 to prune (possible) duplicate expense entries; or one of the other
+letters in parentheses to work with templates, see a calendar, mail
+this session log to someone, read some news about ETRACK, go into View
+Mode, export data, or quit.  You do not need to type <RET> after this
+letter.
+
+* Menu:
+
+* Query command::
+* Add command::
+* Delete command::
+* Update command::
+* Prune duplicates command::
+* Template commands::
+* Calendar display command::
+* Mail session log command::
+* About this program command::
+* Export Data command::
+* View mode::
+
+
+File: etrack.info,  Node: Query command,  Next: Add command,  Up: Session
+
+2.1 Query command
+=================
+
+The Query command is used to query the database and display the result.
+
+ETRACK displays the query menu.  Select one by typing the number
+associated with the query description, and then <RET>.  ETRACK displays
+the results and goes into View mode (*note View mode::) so that you can
+examine the query or ask for a monthly breakdown, if applicable.
+
+The query menu is formed by listing those queries defined in the
+configuration file (*note Configuration file::), followed by the
+"standard queries", which are:
+
+   * attributes - Each attribute becomes a query.
+
+   * "(possible duplicates)" - Show entries that have the same date and
+     amount.  The other fields of each pair of possible duplicates are
+     not taken into account; it is up to you to determine whether or
+     not a pair represents a bonafide duplicate, and what to do about
+     it (*note Prune duplicates command::).
+
+If you specify a query that doesn't exist, ETRACK reports an error, but
+goes into View mode anyway.
+
+
+File: etrack.info,  Node: Add command,  Next: Delete command,  Prev: Query command,  Up: Session
+
+2.2 Add command
+===============
+
+The Add command is used to add an expense entry.
+
+ETRACK prompts you for an amount, a date, one or more attribute codes,
+and zero or more details; adds this entry upon confirmation; then
+loops.  To quit out of the loop, type <RET> when asked for the amount.
+To save typing, you can use `M-p' and `M-n' to select and edit previous
+entries.
+
+When specifying the attribute, you only need to type the first letter
+of its name.  ETRACK expands and displays the full name for you
+automatically.  Use `DEL' to erase mistakes.  Use `?' to display the
+list of available attributes.
+
+Normally, there are no default values, except for the date, which is
+"today", in `YYYY-MM-DD' format.  You can specify a group of default
+values by selecting a template (*note Template commands::), and edit the
+values further prior to confirmation.
+
+2.2.1 Restart
+-------------
+
+During entry, you may wish to change the value of a previously-entered
+(and exited) field.  To restart, type `C-r'.  The previously-entered
+values are used as the default.
+
+
+File: etrack.info,  Node: Delete command,  Next: Update command,  Prev: Add command,  Up: Session
+
+2.3 Delete command
+==================
+
+The Delete command is used to delete an expense entry.
+
+ETRACK prompts you for an entry index number and deletes that entry, no
+questions asked; then loops.  To quit out of the loop, type <RET> alone.
+You can find out an entry's index number by looking at the first column
+of a query (*note Query command::).
+
+
+File: etrack.info,  Node: Update command,  Next: Prune duplicates command,  Prev: Delete command,  Up: Session
+
+2.4 Update command
+==================
+
+The Update command is used to modify one or more expense entries.  The
+precise mechanism depends on whether or not there are marked entries
+(*note View mode::).  If no entries are marked, update is done one
+entry at a time.  Otherwise, the marked entries can be edited and
+updated more or less in parallel.
+
+* Menu:
+
+* Updating one entry at a time::
+* Updating marked entries::
+
+
+File: etrack.info,  Node: Updating one entry at a time,  Next: Updating marked entries,  Up: Update command
+
+2.4.1 Updating one entry at a time
+----------------------------------
+
+ETRACK asks for an entry index number and retrieves that entry for
+update.  For each field, ETRACK allows you to edit the current value.
+To save typing, you can use `M-p' and `M-n' to select and edit previous
+entries.  When you are done, ETRACK asks for confirmation and updates
+that entry.
+
+Note that the `details' field must be in the form of a list of strings.
+For example, if the desired details are:
+
+   * movie
+
+   * One Flew Over the Cuckoo's Nest
+
+Then, this must be entered into ETRACK like so:
+
+     ("movie" "One Flew Over the Cuckoo's Nest")
+
+If the original entry did not have any details, this will be shown as
+`nil'.  We will probably hide this implementation detail in a future
+version of ETRACK.
+
+
+File: etrack.info,  Node: Updating marked entries,  Prev: Updating one entry at a time,  Up: Update command
+
+2.4.2 Updating marked entries
+-----------------------------
+
+ETRACK shows the marked entries in a special format and goes into a
+recursive editing mode.  In this mode, `TAB' moves to the next
+"editable field", circling around to the top at the bottom of the page.
+If you try to modify text outside an editable field, ETRACK signals a
+"text-read-only" error.
+
+When you are done editing the contents of the entries, type `C-c C-c'.
+What happens next depends on whether the entries were changed:
+
+   * If you do not change any entries (for example, by typing `C-c C-c'
+     immediately), ETRACK displays the message `(No changes)'.
+
+   * Otherwise, ETRACK updates the entries in the database then asks if
+     you would like to unmark the updated entries (thus saving you the
+     trouble of having to unmark those entries manually, later).
+
+Regardless of the changes (or non-changes), ETRACK goes into View mode
+as the last step.
+
+
+File: etrack.info,  Node: Prune duplicates command,  Next: Template commands,  Prev: Update command,  Up: Session
+
+2.5 Prune duplicates command
+============================
+
+The Prune duplicates command is used to examine and prune (possible)
+duplicate entries.  *Note Query command::, for the "(possible
+duplicates)" query.
+
+ETRACK computes the list of possible duplicates (may take a few
+seconds) and displays the count of pairs.  For each pair, starting with
+the most recent, ETRACK displays the pair and goes into Prune mode.  To
+get out of Prune mode, type `q'.
+
+Here is a table of keys and what they do in Prune mode:
+
+`1'
+     Prune the first entry of the pair.
+
+`2'
+     Prune the second entry of the pair.
+
+`SPC'
+     Skip to the next pair.
+
+`q'
+     Quit out of Prune mode.
+
+
+After Prune mode, ETRACK displays the number of entries deleted, and
+goes into View mode (*note View mode::).
+
+
+File: etrack.info,  Node: Template commands,  Next: Calendar display command,  Prev: Prune duplicates command,  Up: Session
+
+2.6 Template commands
+=====================
+
+A "template" is a partially completed entry that can be used to
+initialize new entries.  Unlike normal entries which have a numeric
+identification number, each tempate has a unique "name", instead.
+Another difference is that fields may be left unspecified, also known
+as "having a NULL value".
+
+From the main menu you can add using a template (selecting one if none
+are currently selected) as well as edit the available templates.
+
+* Menu:
+
+* Add Using Template command::
+* Editing templates::
+
+
+File: etrack.info,  Node: Add Using Template command,  Next: Editing templates,  Up: Template commands
+
+2.6.1 Add Using Template command
+--------------------------------
+
+The Add Using Template command sets the "current template" and collects
+entries to add using it.  You can also add without any template (*note
+Add command::).  ETRACK lists the available templates, one per line,
+and you type in a name to select one of them.
+
+When a template is selected, its name is shown next to the menu item
+for the Add Using Template command in double-quotes, and is the default
+choice for the next time this command is invoked.
+
+Like the Add command, you can use `C-r' to restart an entry.
+
+
+File: etrack.info,  Node: Editing templates,  Prev: Add Using Template command,  Up: Template commands
+
+2.6.2 Editing templates
+-----------------------
+
+The Edit templates command prompts you to choose a template to edit.
+You can type <TAB> to see a list of available template names, and also
+do completion on partial input.  If you specify a name not in the list,
+a new template will be created with that name.
+
+There are two editing operations: delete and modify.  ETRACK first
+gives you the option to delete the template.  If you decline deletion,
+it is assumed that you wish to modify the template and ETRACK prompts
+you for values for each of the fields: amount, date, attribute code,
+and details.  To leave a field unspecified, simply delete all the text
+in the minibuffer (for example, with `C-a' followed by `C-k').
+
+When the template has been either deleted or modified, ETRACK prompts
+for another template to edit.  You can continue as above, or type <RET>
+to finish editing.
+
+
+File: etrack.info,  Node: Calendar display command,  Next: Mail session log command,  Prev: Template commands,  Up: Session
+
+2.7 Calendar display command
+============================
+
+The Calendar display command displays a calendar (wow!).
+
+ETRACK prompts you for a month to display.  Type a month number, or a
+month number followed by space followed by a year number, or just <RET>
+for the current month.  ETRACK displays the requested month(s) and goes
+into View mode (*note View mode::).
+
+
+File: etrack.info,  Node: Mail session log command,  Next: About this program command,  Prev: Calendar display command,  Up: Session
+
+2.8 Mail session log command
+============================
+
+The Mail session log command mails the session log (up to and including
+the Mail session log command) to someone.
+
+ETRACK prompts you for a recipient for the mail, a subject line, and a
+short one-line message; and uses this info to compose and send the
+email message.  Afterwards, ETRACK goes into View mode (*note View
+mode::).
+
+
+File: etrack.info,  Node: About this program command,  Next: Export Data command,  Prev: Mail session log command,  Up: Session
+
+2.9 About this program command
+==============================
+
+This command shows some information about ETRACK and goes into View mode
+(*note View mode::).
+
+
+File: etrack.info,  Node: Export Data command,  Next: View mode,  Prev: About this program command,  Up: Session
+
+2.10 Export Data command
+========================
+
+This command allows you to export data to a file in tab-separated
+format, i.e., with a tab character between the fields `id', `date',
+`amount', `attcode', `details' (in that order), and also with a tab
+character between each of the elements of `details'.  Other programs
+can process this file format easily.
+
+When invoked, ETRACK displays a small menu in the echo area:
+
+     Source: (m) marked, (p) page, (d) date range, (a) all
+
+The `(m) marked' appears only if there are marked entries (*note View
+mode::).  Type one of the indicated letters to choose the "source" of
+the export.  If you type `p', ETRACK asks for a page number; if `d', a
+date range, which is specified like so:
+
+     YYYY[-MM[-DD]],YYYY[-MM[-DD]]
+
+You can also use a colon (`:') instead of a comma.  Month and days are
+optional.
+
+The first `YYYY-MM-DD' is the start date and the second, the end date.
+If only one date is given (no comma or colon), then only entries from
+that precise date are exported.  If the start date is omitted, it
+defaults to the earliest date.  If the end date is omitted, it defaults
+to the latest date.
+
+NOTE
+====
+
+If you specify an end date of 2005 (for example), that stands for
+`2005-01-01' and _not_ `2005-12-31'.  This behavior will probably
+change prior to ETRACK 1.0 release to be more intuitive.
+
+
+File: etrack.info,  Node: View mode,  Prev: Export Data command,  Up: Session
+
+2.11 View mode
+==============
+
+You can enter View mode from the main menu by typing `v'.  Also, some
+commands enter View mode automatically before returning to the main
+menu.
+
+When you are in View mode, you can move about the session log, all
+around the current page, or even to previous pages (and back).  The
+current position is marked by the cursor.  You can also scroll the
+screen left and right.
+
+View mode is also used to "mark entries" (and unmark them, of course).
+To get out of View mode, type `q'.  Here is a table of keys and what
+they do in View mode:
+
+`SPC'
+     Scroll the screen up a few lines to show text after the current
+     position.
+
+`DEL'
+     Scroll the screen down a few lines to show text before the current
+     position.
+
+`['
+     Scroll the screen left a few columns to show text to the right of
+     the current position.
+
+`]'
+     Scroll the screen right a few columns to show text to the left of
+     the current position.
+
+`P'
+     Go to the top of the current page or to the previous pages if
+     already at the top.  Note that this is an uppercase `P'.
+
+`N'
+     Go to the top of the next page or to the bottom of the current
+     page if already at the last page.  Note that this is an uppercase
+     `N'.
+
+`up'
+`down'
+     Move the cursor up or down one line, respectively.
+
+`RET'
+`S-up'
+`S-down'
+     If the cursor is on a line with a valid entry, <RET> toggles
+     whether or not the entry is "marked".  Marked entries are
+     displayed using an underline.  `S-up' means the <shift> key plus
+     the <up> key simultaneously.  It moves the cursor up one line and
+     then toggles the status of the entry on the destination line,
+     exactly the same as if you had typed <up> followed by <RET>.
+     `S-down' works analogously for downward motion.
+
+     When there are marked entries, the main menu displays `(4) update
+     marked', and the menu item `(u) unmark all' appears.
+
+`q'
+     Quit out of View mode.
+
+
+In the case of View mode after a Query command, typing a number jumps
+to the query selection page (skipping the main menu) so that you can
+begin another query straight away.  Also, three additional keys are
+available to show monthly breakdowns of the query (if applicable), and
+to export data.
+
+`m'
+     Show last query summarized by month.  The display also includes the
+     percentages and a horizontal histogram to the right of the
+     summary.  In the histogram, the largest percentage is represented
+     by 42 "#" characters; the other values are displayed
+     proportionally.
+
+`M'
+     Ask for a month range and then display the last query summarized
+     by the specified months.  Like `m', ETRACK also displays
+     percentages and a histogram.
+
+     A month range has one of two forms: either `YYYY-MM', which
+     indicates one month; or `YYYY-MM,YYYY-MM', which indicates an
+     inclusive range of months.  Some examples:
+
+          2001-2          February 2001
+          2001-2,2002-3   February 2001 through March 2003
+
+`x'
+     Export data from one of two data sources: marked entries or the
+     results of the query.  If there are marked entries, ETRACK asks
+     whether you wish to have them exported.  Type `y' to confirm, or
+     `n' to export the query results.
+
+     This command works as if you had returned to the main menu and
+     typed `x m' or `x p' there (*note Export Data command::), except
+     that the page number is computed automatically in the case of `x
+     p'.
+
+
+File: etrack.info,  Node: Diary Import,  Next: Maintenance,  Prev: Session,  Up: Top
+
+3 Diary Import
+**************
+
+Aside from interactive usage (*note Session::), it is often more
+convenient to record new entries "offline" and then add them in bulk to
+the database at a later time.  This chapter describes the "diary
+format" that ETRACK recognizes, as well as the commands to use, for
+this purpose.
+
+3.1 Diary Format
+================
+
+The diary format is a straightforward text format with four columns,
+each separated by whitespace (one or more tab or space characters).
+The columns appear left-to-right and are named `date', `amount',
+`attcodes' and `details', respectively.  More precisely:
+
+`date'
+     The format is `YYYY-MM-DD' (numerical year, month and day).  If
+     the numerical value of month or day is less than 10, write it with
+     a leading `0' (zero), for example `04' for April.
+
+`amount'
+     The format is `-ABCDE.FG' (digits, minus-sign optional).  You can
+     use however many digits are necessary to the left of the decimal
+     point -- the five shown here are just an example.  However, to the
+     right of the decimal point, two digits are always required, for
+     example `42.00'.
+
+`attcodes'
+     The format is one more characters, connected together.  Which
+     particular characters are valid depends on the database
+     configuration.  You can use the backend shell command
+     `list-attcodes' to see a list:
+
+          etrack -b list-attcodes
+
+     Characters in `attcodes' are case-sensitive; for example, `s' and
+     `S' specify two different attributes.
+
+`details'
+     The format is one or more "strings".  Each string starts and ends
+     with a double-quote.  Within each string, whitespace at the head
+     or tail is not permitted, although internal whitespace is ok.
+     Depending on the database configuration, the first or second
+     detail may be significant for drill-down queries (*note query::).
+     Empty strings are not permitted.
+
+Here is an example with two entries:
+
+     2003-03-23       20.00    f       "torta" "vigoni" "x mamma"
+     2003-03-27        6.00    sh      "tessera coop"
+
+In the first entry, there are three strings in the `details' column, in
+the second, only one.  The columns are separated by multiple spaces.
+
+3.2 Importing Diary Format Data
+===============================
+
+You can import diary format data into the database with the backend
+shell command `import-diary-file'.  There are two invocation
+variations, depending on whether you run ETRACK locally or remotely
+(via ssh).  For the following examples we assume the diary file is
+named `expenses' in the current working directory (locally).
+
+Local ETRACK invocation:
+
+     etrack -b import-diary-file expenses
+
+Remote ETRACK invocation:
+
+     ssh -X REMOTE-HOST etrack -b import-diary-file - < expenses
+
+Note that the portion `etrack -b import-diary-file' is the same for both
+local and remote invocations.  For the latter, the `- < expenses'
+construct arranges for ssh to feed the file to ETRACK using the
+"standard input" channel (and ETRACK will use the term "standard input"
+in messages instead of the filename).
+
+There are two distinct steps to the import process: validation, which
+checks the format of the file; and insertion, which adds entries to the
+database.
+
+If validation fails, ETRACK does not continue, but instead displays an
+error message and lists the line number, reason for failure, and text
+of the invalid lines.  ETRACK will also display some format hints,
+including a list of valid attcodes, and exits with non-success exit
+code.  For example:
+
+     etrack: Sorry, no entries added to the database due to
+             errors encountered in the following lines:
+
+     24:     bad details
+             2003-02-24        2.00    hs      "spina telefono
+
+     192:    bad details (empty)
+             2003-02-26       51.94    f       "esselungga" ""
+
+             :
+             (etc)
+
+On the other hand, if validation is completely successful, ETRACK goes
+ahead with the insertion.  Note that ETRACK does not check for
+duplicate insertions; you need to do that yourself (*note Prune
+duplicates command::).
+
+
+File: etrack.info,  Node: Maintenance,  Next: Design,  Prev: Diary Import,  Up: Top
+
+4 Maintenance
+*************
+
+Normally, once ETRACK is set up (*note Setup::), operation is driven in
+large part by the user (*note Session::).  Occasionally, however, there
+arise tasks that require administrator involvement.  This chapter lists
+the `etrack -b' shell commands available and ends with some short
+examples of their usage.
+
+When using the Emacs front end, client encoding is automatically
+deduced from language environment (*note Customization::).  For shell
+command interaction, however, you may need to explicitly specify how
+you expect the output to be encoded with the `-E CLIENT-ENCODING'
+option (if unspecified the default is `UNICODE').  For a list of
+possible CLIENT-ENCODINGs, see section "Character Set Support" in the
+PostgreSQL documentation.
+
+4.1 Available commands
+======================
+
+Some of the following commands are very dangerous, e.g., `drop' and
+`reset'.  Be careful with these!  Most require that a configuration
+file be specified (*note Configuration file::).  Two in particular are
+interactive: `repl' and `shell'; the rest do their job, display their
+results to stdout, and exit when done.
+
+Usage: etrack -b [-E CLIENT-ENCODING] CMD [ARG]
+where CMD is one of:
+--help                         -- display this message and exit succesfully
+about                          -- display some info about ETRACK
+change-attcode OLDNEW          -- OLDNEW is one arg of two adjacent chars
+char-attributes-alist          -- display attributes keyed by char number
+check-config FILE              -- check FILE and summarize, or signal error
+delete-row ROW                 -- delete ROW from the table
+do-nothing                     -- do absolutely nothing at all, truthfully
+drop                           -- drop the expenses table
+dump (FILE TYPE SPEC)          -- dump to FILE based on date or id
+grant USER                     -- grant db access to a USER
+import-diary-file FILE         -- import diary-format data from FILE
+import-tab-sep-file FILE       -- import tab-separated data from FILE
+initdb                         -- initialize database
+insert LS                      -- insert new data LIST into the table
+list-attcodes                  -- list attcodes and associated attributes
+list-queries                   -- list queries in two columns
+possible-duplicates            -- display single list of possible duplicates
+query-one-row-alist ROW        -- display ROW as an Emacs-friendly alist
+query-one-row ROW              -- display ROW
+query-two-rows (ROW-1 . ROW-2) -- query two rows
+query NUM                      -- submit a query and display the result
+redisplay-last-result-by-month MSPEC -- as advertized
+repl                           -- for use primarily by the emacs front end
+reset                          -- drop and create the db tables
+revoke USER                    -- revoke db access from a USER
+shell                          -- like repl but w/ prompt and no parens required
+template-munge (OP NAME [ARGS...]) -- add/del/mod a template by NAME
+templates-list                 -- display single list of all templates
+update-row (ROW . DATA)        -- update ROW with new DATA
+upgrade-db                     -- fix old misunderstandings upward-compatibly
+
+4.2 Usage examples
+==================
+
+Dumping an existing database:
+
+     etrack -b dump-alist > DUMP
+
+This writes the contents of table `expenses' to file `DUMP', in an
+alist format.  The alist keys are the table's column names.
+
+Loading data into an existing database:
+
+     etrack -b reset                  # omit if you just want to append
+     etrack -b load-alist-file DUMP
+
+Note that the "i" field is not preserved when doing `load-alist-file'.
+*Note Prune duplicates command::.
+
+Upgrading the database schema (*note DB::):
+
+     etrack -b upgrade-db
+
+
+File: etrack.info,  Node: Design,  Next: License,  Prev: Maintenance,  Up: Top
+
+5 Design
+********
+
+This chapter describes some of the innards of ETRACK.  The programmer
+hopes these explanations are clear enough to reference, critique and
+improve upon, later.
+
+* Menu:
+
+* DB::
+* App::
+
+
+File: etrack.info,  Node: DB,  Next: App,  Up: Design
+
+5.1 DB
+======
+
+5.1.1 Quick History
+-------------------
+
+The first two DB design versions had a single table.  Going from
+version 1 to version 2 renamed the column `catcode' to `attcode'.
+Version 3 uses type `integer' instead of `float' for column `amount'.
+Version 3 also introduces a simple table `etrackmetainfo' with columns
+`key' and `value', both of type `text'.  Version 4 (the current one,
+starting with ETRACK 0.999) adds the table `templates'.
+
+5.1.2 ETRACK Meta Info
+----------------------
+
+Here is the list of keys available in the `etrackmetainfo' table:
+
+`*db-design-version*'
+     This is currently "4".
+
+5.1.3 Column Definitions for `expenses'
+---------------------------------------
+
+The `expenses' table is defined like so:
+
+     ((i       serial)
+      (date    timestamp "WITH TIME ZONE" "NOT NULL")
+      (amount  integer "NOT NULL")
+      (attcode text "NOT NULL")
+      (details text[]))
+
+The `templates' table is defined like so:
+
+     ((name    text "PRIMARY KEY")
+      ;; rest similar to table `expenses' but allowing NULL
+      (date    timestamp "WITH TIME ZONE")
+      (amount  integer)
+      (attcode text)
+      (details text[]))
+
+Some schools of database design consider using arrays to be harmful, so
+while ETRACK hasn't advanced enough to make/break that point of view
+just yet, it's a distinct possibility for the future.
+
+
+File: etrack.info,  Node: App,  Prev: DB,  Up: Design
+
+5.2 App
+=======
+
+From the user's point of view, the application is a single command from
+Emacs: `M-x etrack'.  This used to start a big synchronous event loop
+(with many small internal event loops) described in *note Session::.
+Nowadays, we use the (somewhat perfunctory) Etrack major mode.  Other
+implementation issues:
+
+   * Mouse clicks are not handled, so behavior is dependent on the
+     default bindings for mouse events (which may or may not be handled
+     correctly).
+
+   * With respect to the `amount' column, Emacs is only aware of
+     floating point numbers (via `string-to-number' in functions
+     `--etrack-collect-new-entry' and `--etrack-cmd:update').
+     Conversion to/from the `integer' type used by the backend is done
+     by the backend.  This centralizes those conversions at the expense
+     of numerical safety in the frontend input routines.
+
+
+File: etrack.info,  Node: License,  Next: Index,  Prev: Design,  Up: Top
+
+6 License
+*********
+
+ETRACK is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2, or (at your option) any later
+version.
+
+ETRACK is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License along
+with GNU Emacs; see the file COPYING.  If not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301  USA.
+
+
+File: etrack.info,  Node: Index,  Prev: License,  Up: Top
+
+Index
+*****
+
+ [index ]
+* Menu:
+
+* About this program command:            About this program command.
+                                                               (line  6)
+* Add command:                           Add command.          (line  6)
+* Add Using Template command:            Add Using Template command.
+                                                               (line  6)
+* App Innards:                           App.                  (line  6)
+* Bulk data import:                      Diary Import.         (line  6)
+* Calendar display command:              Calendar display command.
+                                                               (line  6)
+* Configuration file:                    Configuration file.   (line  6)
+* custom query:                          query.                (line 59)
+* Customization:                         Customization.        (line  6)
+* Database maintenance:                  Maintenance.          (line  6)
+* Database setup:                        Database setup.       (line  6)
+* DB Innards:                            DB.                   (line  6)
+* Delete command:                        Delete command.       (line  6)
+* Diary format:                          Diary Import.         (line  6)
+* directive, attributes:                 attributes.           (line  6)
+* directive, database:                   name and database.    (line  6)
+* directive, name:                       name and database.    (line  6)
+* directive, query:                      query.                (line  6)
+* drill-down query:                      query.                (line 35)
+* Editing templates:                     Editing templates.    (line  6)
+* Environment:                           Environment.          (line  6)
+* Export Data command:                   Export Data command.  (line  6)
+* Innards:                               Design.               (line  6)
+* Innards, App:                          App.                  (line  6)
+* Innards, DB:                           DB.                   (line  6)
+* License:                               License.              (line  6)
+* Mail session log command:              Mail session log command.
+                                                               (line  6)
+* Main menu:                             Session.              (line 21)
+* Prune duplicates command:              Prune duplicates command.
+                                                               (line  6)
+* Query command:                         Query command.        (line  6)
+* query, custom:                         query.                (line 59)
+* query, drill-down:                     query.                (line 35)
+* query, simple:                         query.                (line 14)
+* Session:                               Session.              (line  6)
+* Setup:                                 Setup.                (line  6)
+* simple query:                          query.                (line 14)
+* TEmplate commands:                     Template commands.    (line  6)
+* Update command:                        Update command.       (line  6)
+* View mode:                             View mode.            (line  6)
+
+
+
+Tag Table:
+Node: Top319
+Node: Setup843
+Node: Configuration file1462
+Node: name and database2350
+Node: attributes2782
+Node: query3483
+Node: Database setup6190
+Node: Environment6910
+Node: Customization8228
+Node: Session9345
+Node: Query command11337
+Node: Add command12440
+Node: Delete command13599
+Node: Update command14049
+Node: Updating one entry at a time14581
+Node: Updating marked entries15477
+Node: Prune duplicates command16517
+Node: Template commands17416
+Node: Add Using Template command18083
+Node: Editing templates18769
+Node: Calendar display command19758
+Node: Mail session log command20253
+Node: About this program command20778
+Node: Export Data command21067
+Node: View mode22536
+Node: Diary Import26081
+Node: Maintenance30255
+Node: Design34120
+Node: DB34407
+Node: App35822
+Node: License36751
+Node: Index37523
+
+End Tag Table

@@ -1,0 +1,22 @@
+TODO (time-stamp: <2008-07-14 11:25:20 ttn>)
+
+- 1.0
+  - write docstrings for all (frontend) commands
+  - export entries
+    + marked
+    + page (aka query)
+    + id
+    - date range
+      + 0101 auto-suffix
+      - more intuitive auto-suffix
+    - histogram (?)
+  + make character encoding configurable
+  - finesse ui
+    + diary format import
+    - handle mouse
+    + handle C-g
+    + handle backend death
+    - C-g in "Add Using Template" loop => sub-menu, not top-menu
+  - include cron job example (backup)
+  - {spell,grammar,style}-check manual
+  - ensure db quiescence during upgrade-db

@@ -1,0 +1,1401 @@
+<html lang="en">
+<head>
+<title>ETRACK</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="ETRACK">
+<meta name="generator" content="makeinfo 4.11.96">
+<link title="Top" rel="top" href="#Top">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<h1 class="settitle">ETRACK</h1>
+<div class="node">
+<p><hr>
+<a name="Top"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Setup">Setup</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
+
+</div>
+
+<h2 class="unnumbered">ETRACK</h2>
+
+<p>This document describes how to setup and use ETRACK, a package to track
+expenses: query, add, delete, update.
+
+<p>This document applies to ETRACK 0.9911.
+
+<ul class="menu">
+<li><a accesskey="1" href="#Setup">Setup</a>:                Preparing to use ETRACK. 
+<li><a accesskey="2" href="#Session">Session</a>:              Using ETRACK. 
+<li><a accesskey="3" href="#Diary-Import">Diary Import</a>:         Another way to use ETRACK. 
+<li><a accesskey="4" href="#Maintenance">Maintenance</a>:          Administering ETRACK. 
+<li><a accesskey="5" href="#Design">Design</a>:               Innards of ETRACK. 
+<li><a accesskey="6" href="#License">License</a>:              Your rights and freedoms.
+
+<li><a accesskey="7" href="#Index">Index</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Setup"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Session">Session</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">1 Setup</h2>
+
+<p><a name="index-Setup-1"></a>
+Setting up to use ETRACK can be viewed as more fun than actually using it,
+depending on your particular proclivities.  After installing ETRACK, you need
+to create a configuration file, and arrange for ETRACK users to set their
+<code>ETRACK_CONFIG</code> environment variable to point to this file.
+
+<p>If someone else has already taken care of these things for you, feel free to
+skip to the next chapter which explains how to use ETRACK (see <a href="#Session">Session</a>).
+
+<ul class="menu">
+<li><a accesskey="1" href="#Configuration-file">Configuration file</a>
+<li><a accesskey="2" href="#Database-setup">Database setup</a>
+<li><a accesskey="3" href="#Environment">Environment</a>
+<li><a accesskey="4" href="#Customization">Customization</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Configuration-file"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Database-setup">Database setup</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
+
+</div>
+
+<h3 class="section">1.1 Configuration file</h3>
+
+<p><a name="index-Configuration-file-2"></a>
+This section documents the configuration file, which is at the heart of the
+ETRACK setup.  The file contains directives describing the configuration name,
+which backend database to use, the expense attributes, and various flavors of
+queries.  Directives have the form of Scheme expressions with the <code>car</code>
+the name of the directive.
+
+<p>Comments begin with semicolon (<code>;</code>) and go to the end of the line. 
+Additionally, you can comment-out a directive by quoting it with single quote
+before the opening parenthesis.
+
+<p>The examples under this section are all taken from the example configuration
+file, which you might find easier to peruse directly, with the shell command
+<code>etrack --display-example-config</code>.
+
+<ul class="menu">
+<li><a accesskey="1" href="#name-and-database">name and database</a>
+<li><a accesskey="2" href="#attributes">attributes</a>
+<li><a accesskey="3" href="#query">query</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="name-and-database"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#attributes">attributes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
+
+</div>
+
+<h4 class="subsection">1.1.1 name and database</h4>
+
+<p><a name="index-directive_002c-name-3"></a><a name="index-directive_002c-database-4"></a>
+The <code>name</code> is a for-human-consumption string that identifies the
+configuration, while the <code>database</code> is the name of the PostgreSQL
+database used to actually keep the data.  The database name is not quoted. 
+For example:
+
+<pre class="example">     (name     . "Example Expenses")
+     (database . etrack_example)
+</pre>
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="attributes"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#query">query</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#name-and-database">name and database</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
+
+</div>
+
+<h4 class="subsection">1.1.2 attributes</h4>
+
+<p><a name="index-directive_002c-attributes-5"></a>
+The <code>attributes</code> directive defines the attributes which, in turn, define
+the attribute codes (also known as "attcodes").  Because attcodes are basically
+the first letters of the attribute names, you need to be somewhat careful not
+to define overlapping names.  For example:
+
+<pre class="example">     (attributes . (vehicle
+                    household
+                    food
+                    utilities
+                    entertainment
+                    rent
+                    misc
+                    insurance))
+</pre>
+<p>Here, the attcodes would be v, h, f, u, e, r, m and i.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="query"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#attributes">attributes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
+
+</div>
+
+<h4 class="subsection">1.1.3 query</h4>
+
+<p><a name="index-directive_002c-query-6"></a>
+There are several flavors of query: simple, drill-down and custom.  The first
+two rely solely on the attribute codes.  By default, a simple query is created
+for each of the attributes, so you don't have to define them yourself.
+
+<h5 class="subsubsection">1.1.3.1 Simple Query</h5>
+
+<p><a name="index-query_002c-simple-7"></a><a name="index-simple-query-8"></a>The simple query has the form:
+
+<pre class="example">     (query . (simple "DESCRIPTION" QUERY-CODE))
+     (query . (simple-list "DESC-1" Q-CODE-1 "DESC-2" Q-CODE-2 ...))
+</pre>
+<p>where <var>QUERY-CODE</var> is "!!" for "all", or a series of attribute codes which
+are ANDed together.  If an attribute code is prefixed with "!", its sense is
+inverted.  The <var>DESCRIPTIONS</var> are short strings that describe the query,
+and may include embedded spaces.  For example:
+
+<pre class="example">     (query . (simple-list
+               "all"                 !!
+               "all no rent"         !r
+               "eating out"          fe
+               "fun not food"        e!f
+               "food not fun"        f!e
+               ))
+</pre>
+<h5 class="subsubsection">1.1.3.2 Drill-Down Query</h5>
+
+<p><a name="index-query_002c-drill_002ddown-9"></a><a name="index-drill_002ddown-query-10"></a>The drill-down query has the form:
+
+<pre class="example">     (query . (drill-down ATTRIBUTE (DETAILS ...)))
+     (query . (drill-down-list CAT-1 (DET-1 ...) CAT-2 (DET-2 ...) ...))
+</pre>
+<p>where <var>ATTRIBUTE</var> is one of the defined attributes.  <var>DETAILS</var> is a
+list of strings that are searched in the first two slots of the <code>details</code>
+field.  The description for the query is formed like so: "ATTRIBUTE / DETAIL". 
+For example:
+
+<pre class="example">     (query . (drill-down-list
+     
+               utilities ("cable"
+                          "sdge"
+                          "phone")
+     
+               vehicle ("gas"
+                        "car"
+                        "moto"
+                        "bike")))
+</pre>
+<h5 class="subsubsection">1.1.3.3 Custom Query</h5>
+
+<p><a name="index-query_002c-custom-11"></a><a name="index-custom-query-12"></a>Lastly, the custom query has the form:
+
+<pre class="example">     (query . (custom "DESCRIPTION" QUERY-THUNK))
+</pre>
+<p>where <var>QUERY-THUNK</var> is a Scheme procedure that takes no arguments and must
+finish with a query using either <code>select</code>
+(see <a href="guile-pg.html#Single_002dTable-Abstraction">select</a>),
+or <code>one-row-table-query</code>.
+
+<div class="defun">
+&mdash; Scheme Procedure: <b>one-row-table-query</b><var> labels vals<a name="index-one_002drow_002dtable_002dquery-13"></a></var><br>
+<blockquote><p>Return a result comprising two rows formed from <var>labels</var> and <var>vals</var>. 
+This object satisfies <code>pg-result?</code>. 
+</p></blockquote></div>
+
+<p>You can use <code>one-row-table-query</code> to present arbitrary data in a way that
+etrack understands.  For example:
+
+<pre class="example">     (query . (custom "sum of numbers from 0-10"
+                      (lambda ()
+                        (one-row-table-query
+                         `(,@(iota 11) sum)
+                         `(,@(iota 11) ,(apply + (iota 11))))))))
+</pre>
+<p>The order of the query directives is preserved in the query menu during
+ETRACK operation (see <a href="#Query-command">Query command</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Database-setup"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Environment">Environment</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Configuration-file">Configuration file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
+
+</div>
+
+<h3 class="section">1.2 Database setup</h3>
+
+<p><a name="index-Database-setup-14"></a>
+This section lists various shell commands to accomplish database related
+tasks.  Of primary importance in setup phase is creating a database and
+granting users access to it.  Before you do that, make sure the configuration
+file has at least the <code>database</code> field specified (see <a href="#Configuration-file">Configuration file</a>).
+
+<p>Creating a new database and initializing it:
+
+<pre class="example">     etrack -b initdb
+</pre>
+<p>Granting access to a user:
+
+<pre class="example">     etrack -b grant USER
+</pre>
+<p>Revoking access from a user:
+
+<pre class="example">     etrack -b revoke USER
+</pre>
+<p>See <a href="#Maintenance">Maintenance</a>, for commands to use once ETRACK has been set up and
+is in regular use.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Environment"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Customization">Customization</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Database-setup">Database setup</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
+
+</div>
+
+<h3 class="section">1.3 Environment</h3>
+
+<p><a name="index-Environment-15"></a>
+The last setup step is to set the environment variable <var>ETRACK_CONFIG</var> to
+point to the the configuration file you created or modified, as described in
+the previous section (see <a href="#Configuration-file">Configuration file</a>).  Supposing you name this
+file /etc/etrack/cherry-lane.config, the following would work for Bourne shell
+and variants:
+
+<pre class="example">     ETRACK_CONFIG=/etc/etrack/cherry-lane.config
+     export ETRACK_CONFIG
+</pre>
+<p>And for csh and variants:
+
+<pre class="example">     setenv ETRACK_CONFIG /etc/etrack/cherry-lane.config
+</pre>
+<p>These fragments should be added to the appropriate shell initialization file
+for each user who is to have access to this configuration, or to the system
+shell initialization file if for all users.
+
+<p>To specify more than one configuration file, separate each filename with a
+colon.  For example:
+
+<pre class="example">     ETRACK_CONFIG=/etc/etrack/c1:/etc/etrack/c2:/etc/etrack/c3
+</pre>
+<p>This example (in Bourne shell syntax) specifies three files <samp><span class="file">c1</span></samp>,
+<samp><span class="file">c2</span></samp> and <samp><span class="file">c3</span></samp>, all in directory <samp><span class="file">/etc/etrack</span></samp>.
+
+<p>Another environment variable that the <samp><span class="file">etrack</span></samp> executable consults is
+<code>EMACS</code>.  If unset, or if it has the value <code>t</code> (commonly the case
+when running ETRACK as a subprocess of Emacs), the default value is taken to
+be simply &ldquo;emacs&rdquo;.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Customization"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment">Environment</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
+
+</div>
+
+<h3 class="section">1.4 Customization</h3>
+
+<p><a name="index-Customization-16"></a>
+When ETRACK starts, it looks for file <code>~/.etrack.el</code> and loads it.  This
+allows you to customize the behavior of ETRACK (somewhat) and Emacs (more so). 
+Here is a complete example:
+
+<pre class="example">     ;;; ~/.etrack.el --- configure the ETRACK user interface
+     
+     (set-language-environment "Latin-1")
+     
+     (blink-cursor-mode -1)
+     (fringe-mode 0)
+     
+     (when (and window-system (member "etrack" command-line-args))
+       (set-face-background 'default "darkgreen")
+       (set-face-foreground 'default "cyan")
+       (set-face-foreground 'mode-line "white")
+       (set-face-background 'mode-line "black"))
+     
+     ;;; ~/.etrack.el ends here
+</pre>
+<p>This first sets the language environment so that <code>toggle-input-method</code>
+(normally bound to <kbd>C-\</kbd>) works without asking you for the default input
+method; then continues to set up the display.
+
+<p>The expression <code>(member "etrack" command-line-args)</code> is true when ETRACK
+is started from the shell, and false when started with &lsquo;<samp><span class="samp">M-x etrack RET</span></samp>&rsquo;
+in an already running Emacs session.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Session"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Diary-Import">Diary Import</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Setup">Setup</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">2 Session</h2>
+
+<p><a name="index-Session-17"></a>
+There are two ways to start ETRACK:
+
+     <ul>
+<li>with the shell command <code>etrack</code>
+
+     <p>A variant is <code>etrack -nw</code>. 
+If you are using a windowing system, this command starts
+ETRACK in the current window instead of creating another one
+(<code>nw</code> stands for <dfn>no window system</dfn>).
+
+     <li>by typing <code>M-x etrack</code> into Emacs
+
+     <p>If there is an already-active session, this simply selects the ETRACK
+buffer instead of starting a new session.  In this case, Emacs also
+displays &lsquo;<samp><span class="samp">(Resuming already-active session)</span></samp>&rsquo; in the echo area. 
+</ul>
+
+<p><a name="index-Main-menu-18"></a>If you have more than one configuration specified, ETRACK
+asks you to choose one of them.  After this is decided,
+ETRACK clears the screen and displays the main menu:
+
+<pre class="example">     Welcome to ETRACK for NAME!
+     Please report bugs to ttn.
+     
+     === Page 1 ===
+     
+     Choose a command by typing a number or letter:
+     
+      (1) query
+     
+      (2) add
+      (3) delete
+      (4) update
+      (5) prune duplicates
+     
+      (t) add using template
+      (T) edit templates
+     
+      (c) calendar
+      (m) mail session log
+      (a) about this program
+     
+      (x) export data
+      (v) view mode
+     
+      (q) quit
+     
+     Your choice:
+</pre>
+<p>Here, <code>NAME</code> is the name given in the configuration file referenced by
+the <code>ETRACK_CONFIG</code> env var (see <a href="#Environment">Environment</a>).
+
+<p>Type 1, 2, 3 or 4, to query, add, delete, or update expense entries; or 5 to
+prune (possible) duplicate expense entries; or one of the other letters in
+parentheses to work with templates,
+see a calendar, mail this session log to someone, read some
+news about ETRACK, go into View Mode,
+export data,
+or quit.  You do not need to type &lt;RET&gt;
+after this letter.
+
+<ul class="menu">
+<li><a accesskey="1" href="#Query-command">Query command</a>
+<li><a accesskey="2" href="#Add-command">Add command</a>
+<li><a accesskey="3" href="#Delete-command">Delete command</a>
+<li><a accesskey="4" href="#Update-command">Update command</a>
+<li><a accesskey="5" href="#Prune-duplicates-command">Prune duplicates command</a>
+<li><a accesskey="6" href="#Template-commands">Template commands</a>
+<li><a accesskey="7" href="#Calendar-display-command">Calendar display command</a>
+<li><a accesskey="8" href="#Mail-session-log-command">Mail session log command</a>
+<li><a accesskey="9" href="#About-this-program-command">About this program command</a>
+<li><a href="#Export-Data-command">Export Data command</a>
+<li><a href="#View-mode">View mode</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Query-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Add-command">Add command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.1 Query command</h3>
+
+<p><a name="index-Query-command-19"></a>
+The Query command is used to query the database and display the result.
+
+<p>ETRACK displays the query menu.  Select one by typing the number associated
+with the query description, and then &lt;RET&gt;. 
+ETRACK displays the results and
+goes into View mode (see <a href="#View-mode">View mode</a>) so that you can examine the query or
+ask for a monthly breakdown, if applicable.
+
+<p>The query menu is formed by listing those queries defined in the configuration
+file (see <a href="#Configuration-file">Configuration file</a>), followed by the "standard queries", which
+are:
+
+     <ul>
+<li>attributes &ndash; Each attribute becomes a query. 
+<li>"(possible duplicates)" &ndash; Show entries that have the same date and
+amount.  The other fields of each pair of possible duplicates are not taken
+into account; it is up to you to determine whether or not a pair represents a
+bonafide duplicate, and what to do about it (see <a href="#Prune-duplicates-command">Prune duplicates command</a>). 
+</ul>
+
+<p>If you specify a query that doesn't exist, ETRACK reports an error, but goes
+into View mode anyway.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Add-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Delete-command">Delete command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Query-command">Query command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.2 Add command</h3>
+
+<p><a name="index-Add-command-20"></a>
+The Add command is used to add an expense entry.
+
+<p>ETRACK prompts you for an amount, a date, one or more attribute codes, and zero
+or more details; adds this entry upon confirmation; then loops.  To quit out
+of the loop, type &lt;RET&gt; when asked for the amount. 
+To save typing, you can use
+<code>M-p</code> and <code>M-n</code> to select and edit previous entries.
+
+<p>When specifying the attribute, you only need to type the first letter of its
+name.  ETRACK expands and displays the full name for you automatically.  Use
+<code>DEL</code> to erase mistakes.  Use <code>?</code> to display the list of available
+attributes.
+
+<p>Normally, there are no default values, except for the date, which is
+<dfn>today</dfn>, in <code>YYYY-MM-DD</code> format.  You can specify a group of default
+values by selecting a template (see <a href="#Template-commands">Template commands</a>), and edit the
+values further prior to confirmation.
+
+<h4 class="subsection">2.2.1 Restart</h4>
+
+<p>During entry, you may wish to change the value of a previously-entered (and
+exited) field.  To restart, type <kbd>C-r</kbd>.  The previously-entered values are
+used as the default.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Delete-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Update-command">Update command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-command">Add command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.3 Delete command</h3>
+
+<p><a name="index-Delete-command-21"></a>
+The Delete command is used to delete an expense entry.
+
+<p>ETRACK prompts you for an entry index number and deletes that entry, no
+questions asked; then loops.  To quit out of the loop, type &lt;RET&gt; alone. 
+You
+can find out an entry's index number by looking at the first column of a query
+(see <a href="#Query-command">Query command</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Update-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Prune-duplicates-command">Prune duplicates command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Delete-command">Delete command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.4 Update command</h3>
+
+<p><a name="index-Update-command-22"></a>
+The Update command is used to modify one or more expense entries.  The precise
+mechanism depends on whether or not there are marked entries (see <a href="#View-mode">View mode</a>).  If no entries are marked, update is done one entry at a time. 
+Otherwise, the marked entries can be edited and updated more or less in
+parallel.
+
+<ul class="menu">
+<li><a accesskey="1" href="#Updating-one-entry-at-a-time">Updating one entry at a time</a>
+<li><a accesskey="2" href="#Updating-marked-entries">Updating marked entries</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Updating-one-entry-at-a-time"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Updating-marked-entries">Updating marked entries</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Update-command">Update command</a>
+
+</div>
+
+<h4 class="subsection">2.4.1 Updating one entry at a time</h4>
+
+<p>ETRACK asks for an entry index number and retrieves that entry for update. 
+For each field, ETRACK allows you to edit the current value.  To save typing,
+you can use <code>M-p</code> and <code>M-n</code> to select and edit previous entries. 
+When you are done, ETRACK asks for confirmation and updates that entry.
+
+<p>Note that the <code>details</code> field must be in the form of a list of strings. 
+For example, if the desired details are:
+
+     <ul>
+<li>movie
+<li>One Flew Over the Cuckoo's Nest
+</ul>
+
+<p>Then, this must be entered into ETRACK like so:
+
+<pre class="example">     ("movie" "One Flew Over the Cuckoo's Nest")
+</pre>
+<p>If the original entry did not have any details, this will be shown as
+<code>nil</code>.  We will probably hide this implementation detail in a future
+version of ETRACK.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Updating-marked-entries"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Updating-one-entry-at-a-time">Updating one entry at a time</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Update-command">Update command</a>
+
+</div>
+
+<h4 class="subsection">2.4.2 Updating marked entries</h4>
+
+<p>ETRACK shows the marked entries in a special format and goes into a recursive
+editing mode.  In this mode, <kbd>TAB</kbd> moves to the next <dfn>editable field</dfn>,
+circling around to the top at the bottom of the page.  If you try to modify
+text outside an editable field, ETRACK signals a &ldquo;text-read-only&rdquo; error.
+
+<p>When you are done editing the contents of the entries, type <kbd>C-c C-c</kbd>. 
+What happens next depends on whether the entries were changed:
+
+     <ul>
+<li>If you do not change any entries (for example, by typing <kbd>C-c C-c</kbd>
+immediately), ETRACK displays the message &lsquo;<samp><span class="samp">(No changes)</span></samp>&rsquo;.
+
+     <li>Otherwise, ETRACK updates the entries in the database then asks if you
+would like to unmark the updated entries (thus saving you the trouble of
+having to unmark those entries manually, later). 
+</ul>
+
+<p>Regardless of the changes (or non-changes), ETRACK goes into View mode as the
+last step.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Prune-duplicates-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Template-commands">Template commands</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Update-command">Update command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.5 Prune duplicates command</h3>
+
+<p><a name="index-Prune-duplicates-command-23"></a>
+The Prune duplicates command is used to examine and prune (possible) duplicate
+entries.  See <a href="#Query-command">Query command</a>, for the "(possible duplicates)" query.
+
+<p>ETRACK computes the list of possible duplicates (may take a few seconds) and
+displays the count of pairs.  For each pair, starting with the most recent,
+ETRACK displays the pair and goes into Prune mode.  To get out of Prune mode,
+type <code>q</code>.
+
+<p>Here is a table of keys and what they do in Prune mode:
+
+     <dl>
+<dt><kbd>1</kbd><dd>Prune the first entry of the pair.
+
+     <br><dt><kbd>2</kbd><dd>Prune the second entry of the pair.
+
+     <br><dt><kbd>SPC</kbd><dd>Skip to the next pair.
+
+     <br><dt><kbd>q</kbd><dd>Quit out of Prune mode.
+
+</dl>
+
+<p>After Prune mode, ETRACK displays the number of entries deleted, and goes into
+View mode (see <a href="#View-mode">View mode</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Template-commands"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Calendar-display-command">Calendar display command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Prune-duplicates-command">Prune duplicates command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.6 Template commands</h3>
+
+<p><a name="index-TEmplate-commands-24"></a>
+A <dfn>template</dfn> is a partially completed entry that can be used to initialize
+new entries.  Unlike normal entries which have a numeric
+identification number, each tempate has a unique <dfn>name</dfn>, instead.  Another
+difference is that fields may be left unspecified, also known as <dfn>having a
+NULL value</dfn>.
+
+<p>From the main menu you can add using a template (selecting one if none are
+currently selected) as well as edit the available templates.
+
+<ul class="menu">
+<li><a accesskey="1" href="#Add-Using-Template-command">Add Using Template command</a>
+<li><a accesskey="2" href="#Editing-templates">Editing templates</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Add-Using-Template-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-templates">Editing templates</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</a>
+
+</div>
+
+<h4 class="subsection">2.6.1 Add Using Template command</h4>
+
+<p><a name="index-Add-Using-Template-command-25"></a>
+The Add Using Template command sets the <dfn>current template</dfn> and
+collects entries to add using it.  You can also add without any template
+(see <a href="#Add-command">Add command</a>). 
+ETRACK lists the available templates,
+one per line, and you type in a name to select one of them.
+
+<p>When a template is selected, its name is shown next to the menu item for the
+Add Using Template command in double-quotes, and is the default choice for the
+next time this command is invoked.
+
+<p>Like the Add command, you can use <kbd>C-r</kbd> to restart an entry.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Editing-templates"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-Using-Template-command">Add Using Template command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</a>
+
+</div>
+
+<h4 class="subsection">2.6.2 Editing templates</h4>
+
+<p><a name="index-Editing-templates-26"></a>
+The Edit templates command prompts you to choose a template to edit.  You can
+type &lt;TAB&gt; to see a list of available template names, and also do
+completion on partial input.  If you specify a name not in the list, a new
+template will be created with that name.
+
+<p>There are two editing operations: delete and modify.  ETRACK first gives you
+the option to delete the template.  If you decline deletion, it is assumed
+that you wish to modify the template and ETRACK prompts you for values for
+each of the fields: amount, date, attribute code, and details.  To leave a
+field unspecified, simply delete all the text in the minibuffer (for example,
+with <kbd>C-a</kbd> followed by <kbd>C-k</kbd>).
+
+<p>When the template has been either deleted or modified, ETRACK prompts for
+another template to edit.  You can continue as above, or type &lt;RET&gt; to
+finish editing.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Calendar-display-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Mail-session-log-command">Mail session log command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Template-commands">Template commands</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.7 Calendar display command</h3>
+
+<p><a name="index-Calendar-display-command-27"></a>
+The Calendar display command displays a calendar (wow!).
+
+<p>ETRACK prompts you for a month to display.  Type a month number, or a month
+number followed by space followed by a year number, or just &lt;RET&gt; for the
+current month.  ETRACK displays the requested month(s) and goes into View mode
+(see <a href="#View-mode">View mode</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Mail-session-log-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#About-this-program-command">About this program command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Calendar-display-command">Calendar display command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.8 Mail session log command</h3>
+
+<p><a name="index-Mail-session-log-command-28"></a>
+The Mail session log command mails the session log (up to and including the
+Mail session log command) to someone.
+
+<p>ETRACK prompts you for a recipient for the mail, a subject line, and a short
+one-line message; and uses this info to compose and send the email message. 
+Afterwards, ETRACK goes into View mode (see <a href="#View-mode">View mode</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="About-this-program-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Export-Data-command">Export Data command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Mail-session-log-command">Mail session log command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.9 About this program command</h3>
+
+<p><a name="index-About-this-program-command-29"></a>
+This command shows some information about ETRACK and goes into View mode
+(see <a href="#View-mode">View mode</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Export-Data-command"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#View-mode">View mode</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#About-this-program-command">About this program command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.10 Export Data command</h3>
+
+<p><a name="index-Export-Data-command-30"></a>
+This command allows you to export data to a file in tab-separated format,
+i.e., with a tab character between the fields <code>id</code>, <code>date</code>,
+<code>amount</code>, <code>attcode</code>, <code>details</code> (in that order), and also with a
+tab character between each of the elements of <code>details</code>.  Other programs
+can process this file format easily.
+
+<p>When invoked, ETRACK displays a small menu in the echo area:
+
+<pre class="example">     Source: (m) marked, (p) page, (d) date range, (a) all
+</pre>
+<p>The &lsquo;<samp><span class="samp">(m) marked</span></samp>&rsquo; appears only if there are marked entries
+(see <a href="#View-mode">View mode</a>).  Type one of the indicated letters to choose
+the <dfn>source</dfn> of the export.  If you type <kbd>p</kbd>, ETRACK asks
+for a page number; if <kbd>d</kbd>, a date range, which is specified like so:
+
+<pre class="example">     YYYY[-MM[-DD]],YYYY[-MM[-DD]]
+</pre>
+<p>You can also use a colon (<kbd>:</kbd>) instead of a comma. 
+Month and days are optional.
+
+<p>The first <code>YYYY-MM-DD</code> is the start date and the second, the end date. 
+If only one date is given (no comma or colon), then only entries from that
+precise date are exported.  If the start date is omitted, it defaults to the
+earliest date.  If the end date is omitted, it defaults to the latest date.
+
+<h3 class="heading">NOTE</h3>
+
+<p>If you specify an end date of 2005 (for example), that stands for
+<code>2005-01-01</code> and <em>not</em> <code>2005-12-31</code>.  This behavior will
+probably change prior to ETRACK 1.0 release to be more intuitive.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="View-mode"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Export-Data-command">Export Data command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
+
+</div>
+
+<h3 class="section">2.11 View mode</h3>
+
+<p><a name="index-View-mode-31"></a>
+You can enter View mode from the main menu by typing <code>v</code>.  Also, some
+commands enter View mode automatically before returning to the main menu.
+
+<p>When you are in View mode, you can move about the session log, all around the
+current page, or even to previous pages (and back).  The current position is
+marked by the cursor.  You can also scroll the screen left and right.
+
+<p>View mode is also used to <dfn>mark entries</dfn> (and unmark them, of course).  To
+get out of View mode, type <code>q</code>.  Here is a table of keys and what they do
+in View mode:
+
+     <dl>
+<dt><kbd>SPC</kbd><dd>Scroll the screen up a few lines to show text after the current position.
+
+     <br><dt><kbd>DEL</kbd><dd>Scroll the screen down a few lines to show text before the current position.
+
+     <br><dt><kbd>[</kbd><dd>Scroll the screen left a few columns to show text to the right of the current
+position.
+
+     <br><dt><kbd>]</kbd><dd>Scroll the screen right a few columns to show text to the left of the current
+position.
+
+     <br><dt><kbd>P</kbd><dd>Go to the top of the current page or to the previous pages if already at the
+top.  Note that this is an uppercase <code>P</code>.
+
+     <br><dt><kbd>N</kbd><dd>Go to the top of the next page or to the bottom of the current page if already
+at the last page.  Note that this is an uppercase <code>N</code>.
+
+     <br><dt><kbd>up</kbd><dt><kbd>down</kbd><dd>Move the cursor up or down one line, respectively.
+
+     <br><dt><kbd>RET</kbd><dt><kbd>S-up</kbd><dt><kbd>S-down</kbd><dd>If the cursor is on a line with a valid entry, &lt;RET&gt; toggles whether or
+not the entry is <dfn>marked</dfn>.  Marked entries are displayed using an
+underline.  <kbd>S-up</kbd> means the &lt;shift&gt; key plus the &lt;up&gt; key
+simultaneously.  It moves the cursor up one line and then toggles the status
+of the entry on the destination line, exactly the same as if you had typed
+&lt;up&gt; followed by &lt;RET&gt;.  <kbd>S-down</kbd> works analogously for downward
+motion.
+
+     <p>When there are marked entries, the main menu displays &lsquo;<samp><span class="samp">(4) update
+marked</span></samp>&rsquo;, and the menu item &lsquo;<samp><span class="samp">(u) unmark all</span></samp>&rsquo; appears.
+
+     <br><dt><kbd>q</kbd><dd>Quit out of View mode.
+
+</dl>
+
+<p>In the case of View mode after a Query command, typing a number
+jumps to the query selection page (skipping the main menu) so that you
+can begin another query straight away.  Also, three additional keys are
+available to show monthly breakdowns of the query (if applicable), and
+to export data.
+
+     <dl>
+<dt><kbd>m</kbd><dd>Show last query summarized by month.  The display also includes the
+percentages and a horizontal histogram to the right of the summary.  In the
+histogram, the largest percentage is represented by 42 "#" characters; the
+other values are displayed proportionally.
+
+     <br><dt><kbd>M</kbd><dd>Ask for a month range and then display the last query summarized by the
+specified months.  Like <code>m</code>, ETRACK also displays percentages and a
+histogram.
+
+     <p>A month range has one of two forms: either <code>YYYY-MM</code>, which indicates one
+month; or <code>YYYY-MM,YYYY-MM</code>, which indicates an inclusive range of
+months.  Some examples:
+
+     <pre class="example">          2001-2          February 2001
+          2001-2,2002-3   February 2001 through March 2003
+</pre>
+     <br><dt><kbd>x</kbd><dd>Export data from one of two data sources: marked entries or the results of the
+query.  If there are marked entries, ETRACK asks whether you wish to have them
+exported.  Type <kbd>y</kbd> to confirm, or <kbd>n</kbd> to export the query results.
+
+     <p>This command works as if you had returned to the main menu and typed <kbd>x m</kbd>
+or <kbd>x p</kbd> there (see <a href="#Export-Data-command">Export Data command</a>), except that the page number
+is computed automatically in the case of <kbd>x p</kbd>. 
+</dl>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Diary-Import"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Maintenance">Maintenance</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Session">Session</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">3 Diary Import</h2>
+
+<p><a name="index-Bulk-data-import-32"></a><a name="index-Diary-format-33"></a>
+Aside from interactive usage (see <a href="#Session">Session</a>), it is often more convenient
+to record new entries <dfn>offline</dfn> and then add them in bulk to the database
+at a later time.  This chapter describes the <dfn>diary format</dfn> that ETRACK
+recognizes, as well as the commands to use, for this purpose.
+
+<h3 class="section">3.1 Diary Format</h3>
+
+<p>The diary format is a straightforward text format with four columns, each
+separated by whitespace (one or more tab or space characters).  The columns
+appear left-to-right and are named <code>date</code>, <code>amount</code>, <code>attcodes</code>
+and <code>details</code>, respectively.  More precisely:
+
+     <dl>
+<dt><code>date</code><dd>The format is <code>YYYY-MM-DD</code> (numerical year, month and day). 
+If the numerical value of month or day is less than 10, write it
+with a leading <code>0</code> (zero), for example <code>04</code> for April.
+
+     <br><dt><code>amount</code><dd>The format is <code>-ABCDE.FG</code> (digits, minus-sign optional). 
+You can use however many digits are necessary to the left of the decimal
+point &mdash; the five shown here are just an example.  However, to the right of
+the decimal point, two digits are always required, for example <code>42.00</code>.
+
+     <br><dt><code>attcodes</code><dd>The format is one more characters, connected together.  Which particular
+characters are valid depends on the database configuration.  You can use the
+backend shell command <code>list-attcodes</code> to see a list:
+
+     <pre class="example">          etrack -b list-attcodes
+</pre>
+     <p>Characters in <code>attcodes</code> are case-sensitive; for example,
+<code>s</code> and <code>S</code> specify two different attributes.
+
+     <br><dt><code>details</code><dd>The format is one or more <dfn>strings</dfn>.  Each string starts and ends with a
+double-quote.  Within each string, whitespace at the head or tail is not
+permitted, although internal whitespace is ok.  Depending on the database
+configuration, the first or second detail may be significant for drill-down
+queries (see <a href="#query">query</a>).  Empty strings are not permitted. 
+</dl>
+
+<p>Here is an example with two entries:
+
+<pre class="example">     2003-03-23       20.00    f       "torta" "vigoni" "x mamma"
+     2003-03-27        6.00    sh      "tessera coop"
+</pre>
+<p>In the first entry, there are three strings in the <code>details</code> column, in
+the second, only one.  The columns are separated by multiple spaces.
+
+<h3 class="section">3.2 Importing Diary Format Data</h3>
+
+<p>You can import diary format data into the database with the
+backend shell command <code>import-diary-file</code>.  There are two invocation
+variations, depending on whether you run ETRACK locally or remotely (via ssh). 
+For the following examples we assume the diary file is named <samp><span class="file">expenses</span></samp>
+in the current working directory (locally).
+
+<p>Local ETRACK invocation:
+
+<pre class="example">     etrack -b import-diary-file expenses
+</pre>
+<p>Remote ETRACK invocation:
+
+<pre class="example">     ssh -X REMOTE-HOST etrack -b import-diary-file - &lt; expenses
+</pre>
+<p>Note that the portion <code>etrack -b import-diary-file</code> is the same for both
+local and remote invocations.  For the latter, the <code>- &lt; expenses</code>
+construct arranges for ssh to feed the file to ETRACK using the <dfn>standard
+input</dfn> channel (and ETRACK will use the term &ldquo;standard input&rdquo; in messages
+instead of the filename).
+
+<p>There are two distinct steps to the import process: validation, which checks
+the format of the file; and insertion, which adds entries to the database.
+
+<p>If validation fails, ETRACK does not continue, but instead displays an error
+message and lists the line number, reason for failure, and text of the invalid
+lines.  ETRACK will also display some format hints, including a list of valid
+attcodes, and exits with non-success exit code.  For example:
+
+<pre class="example">     etrack: Sorry, no entries added to the database due to
+             errors encountered in the following lines:
+     
+     24:     bad details
+             2003-02-24        2.00    hs      "spina telefono
+     
+     192:    bad details (empty)
+             2003-02-26       51.94    f       "esselungga" ""
+     
+             :
+             (etc)
+</pre>
+<p>On the other hand, if validation is completely successful, ETRACK goes ahead
+with the insertion.  Note that ETRACK does not check for duplicate insertions;
+you need to do that yourself (see <a href="#Prune-duplicates-command">Prune duplicates command</a>).
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Maintenance"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Design">Design</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Diary-Import">Diary Import</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">4 Maintenance</h2>
+
+<p><a name="index-Database-maintenance-34"></a>
+Normally, once ETRACK is set up (see <a href="#Setup">Setup</a>), operation is driven in
+large part by the user (see <a href="#Session">Session</a>).  Occasionally, however, there
+arise tasks that require administrator involvement.  This chapter lists
+the <code>etrack -b</code> shell commands available and ends with some short
+examples of their usage.
+
+<p>When using the Emacs front end, client encoding is automatically deduced from
+language environment (see <a href="#Customization">Customization</a>).  For shell command interaction,
+however, you may need to explicitly specify how you expect the output to be
+encoded with the <code>-E </code><var>client-encoding</var> option (if unspecified the
+default is <code>UNICODE</code>). 
+For a list of possible <var>client-encoding</var>s, see section &ldquo;Character Set
+Support&rdquo; in the PostgreSQL documentation.
+
+<h3 class="section">4.1 Available commands</h3>
+
+<p>Some of the following commands are very dangerous, e.g., <code>drop</code> and
+<code>reset</code>.  Be careful with these!  Most require that a configuration
+file be specified (see <a href="#Configuration-file">Configuration file</a>).  Two in particular are
+interactive: <code>repl</code> and <code>shell</code>; the rest do their job,
+display their results to stdout, and exit when done.
+
+<pre class="verbatim">Usage: etrack -b [-E CLIENT-ENCODING] CMD [ARG]
+where CMD is one of:
+--help                         -- display this message and exit succesfully
+about                          -- display some info about ETRACK
+change-attcode OLDNEW          -- OLDNEW is one arg of two adjacent chars
+char-attributes-alist          -- display attributes keyed by char number
+check-config FILE              -- check FILE and summarize, or signal error
+delete-row ROW                 -- delete ROW from the table
+do-nothing                     -- do absolutely nothing at all, truthfully
+drop                           -- drop the expenses table
+dump (FILE TYPE SPEC)          -- dump to FILE based on date or id
+grant USER                     -- grant db access to a USER
+import-diary-file FILE         -- import diary-format data from FILE
+import-tab-sep-file FILE       -- import tab-separated data from FILE
+initdb                         -- initialize database
+insert LS                      -- insert new data LIST into the table
+list-attcodes                  -- list attcodes and associated attributes
+list-queries                   -- list queries in two columns
+possible-duplicates            -- display single list of possible duplicates
+query-one-row-alist ROW        -- display ROW as an Emacs-friendly alist
+query-one-row ROW              -- display ROW
+query-two-rows (ROW-1 . ROW-2) -- query two rows
+query NUM                      -- submit a query and display the result
+redisplay-last-result-by-month MSPEC -- as advertized
+repl                           -- for use primarily by the emacs front end
+reset                          -- drop and create the db tables
+revoke USER                    -- revoke db access from a USER
+shell                          -- like repl but w/ prompt and no parens required
+template-munge (OP NAME [ARGS...]) -- add/del/mod a template by NAME
+templates-list                 -- display single list of all templates
+update-row (ROW . DATA)        -- update ROW with new DATA
+upgrade-db                     -- fix old misunderstandings upward-compatibly
+</pre>
+
+<h3 class="section">4.2 Usage examples</h3>
+
+<p>Dumping an existing database:
+
+<pre class="example">     etrack -b dump-alist &gt; DUMP
+</pre>
+<p>This writes the contents of table <code>expenses</code> to file <samp><span class="file">DUMP</span></samp>,
+in an alist format.  The alist keys are the table's column names.
+
+<p>Loading data into an existing database:
+
+<pre class="example">     etrack -b reset                  # omit if you just want to append
+     etrack -b load-alist-file DUMP
+</pre>
+<p>Note that the "i" field is not preserved when doing <code>load-alist-file</code>. 
+See <a href="#Prune-duplicates-command">Prune duplicates command</a>.
+
+<p>Upgrading the database schema (see <a href="#DB">DB</a>):
+
+<pre class="example">     etrack -b upgrade-db
+</pre>
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Design"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#License">License</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Maintenance">Maintenance</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">5 Design</h2>
+
+<p><a name="index-Innards-35"></a>
+This chapter describes some of the innards of ETRACK.  The programmer hopes
+these explanations are clear enough to reference, critique and improve upon,
+later.
+
+<ul class="menu">
+<li><a accesskey="1" href="#DB">DB</a>
+<li><a accesskey="2" href="#App">App</a>
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="DB"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#App">App</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
+
+</div>
+
+<h3 class="section">5.1 DB</h3>
+
+<p><a name="index-DB-Innards-36"></a><a name="index-Innards_002c-DB-37"></a>
+
+<h4 class="subsection">5.1.1 Quick History</h4>
+
+<p>The first two DB design versions had a single table.  Going from version 1 to
+version 2 renamed the column <code>catcode</code> to <code>attcode</code>.  Version 3
+uses type <code>integer</code> instead of
+<code>float</code> for column <code>amount</code>.  Version 3 also introduces a simple
+table <code>etrackmetainfo</code> with columns <code>key</code> and <code>value</code>, both of
+type <code>text</code>.  Version 4 (the current one, starting with ETRACK 0.999)
+adds the table <code>templates</code>.
+
+<h4 class="subsection">5.1.2 ETRACK Meta Info</h4>
+
+<p>Here is the list of keys available in the <code>etrackmetainfo</code> table:
+
+     <dl>
+<dt><code>*db-design-version*</code><dd>This is currently "4". 
+</dl>
+
+<h4 class="subsection">5.1.3 Column Definitions for <code>expenses</code></h4>
+
+<p>The <code>expenses</code> table is defined like so:
+
+<pre class="example">     ((i       serial)
+      (date    timestamp "WITH TIME ZONE" "NOT NULL")
+      (amount  integer "NOT NULL")
+      (attcode text "NOT NULL")
+      (details text[]))
+</pre>
+<p>The <code>templates</code> table is defined like so:
+
+<pre class="example">     ((name    text "PRIMARY KEY")
+      ;; rest similar to table `expenses' but allowing NULL
+      (date    timestamp "WITH TIME ZONE")
+      (amount  integer)
+      (attcode text)
+      (details text[]))
+</pre>
+<p>Some schools of database design consider using arrays to be harmful, so while
+ETRACK hasn't advanced enough to make/break that point of view just yet, it's
+a distinct possibility for the future.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="App"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#DB">DB</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
+
+</div>
+
+<h3 class="section">5.2 App</h3>
+
+<p><a name="index-App-Innards-38"></a><a name="index-Innards_002c-App-39"></a>
+From the user's point of view, the application is a single command from Emacs:
+<code>M-x etrack</code>.  This used to start a big synchronous event loop (with many
+small internal event loops) described in <a href="#Session">Session</a>.  Nowadays, we use the
+(somewhat perfunctory) Etrack major mode.  Other implementation issues:
+
+     <ul>
+<li>Mouse clicks are not handled, so behavior is dependent on the default
+bindings for mouse events (which may or may not be handled correctly).
+
+     <li>With respect to the <code>amount</code> column, Emacs is only aware of
+floating point numbers (via <code>string-to-number</code> in functions
+<code>--etrack-collect-new-entry</code> and <code>--etrack-cmd:update</code>). 
+Conversion to/from the <code>integer</code> type used by the backend is done
+by the backend.  This centralizes those conversions at the expense of
+numerical safety in the frontend input routines. 
+</ul>
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="License"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Index">Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Design">Design</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">6 License</h2>
+
+<p><a name="index-License-40"></a>
+ETRACK is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+<p>ETRACK is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+<p>You should have received a copy of the GNU General Public License
+along with GNU Emacs; see the file COPYING.  If not, write to the
+Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA  02110-1301  USA.
+
+<!--  -->
+<div class="node">
+<p><hr>
+<a name="Index"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#License">License</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="unnumbered">Index</h2>
+
+<ul class="index-cp" compact>
+<li><a href="#index-About-this-program-command-29">About this program command</a>: <a href="#About-this-program-command">About this program command</a></li>
+<li><a href="#index-Add-command-20">Add command</a>: <a href="#Add-command">Add command</a></li>
+<li><a href="#index-Add-Using-Template-command-25">Add Using Template command</a>: <a href="#Add-Using-Template-command">Add Using Template command</a></li>
+<li><a href="#index-App-Innards-38">App Innards</a>: <a href="#App">App</a></li>
+<li><a href="#index-Bulk-data-import-32">Bulk data import</a>: <a href="#Diary-Import">Diary Import</a></li>
+<li><a href="#index-Calendar-display-command-27">Calendar display command</a>: <a href="#Calendar-display-command">Calendar display command</a></li>
+<li><a href="#index-Configuration-file-2">Configuration file</a>: <a href="#Configuration-file">Configuration file</a></li>
+<li><a href="#index-custom-query-12">custom query</a>: <a href="#query">query</a></li>
+<li><a href="#index-Customization-16">Customization</a>: <a href="#Customization">Customization</a></li>
+<li><a href="#index-Database-maintenance-34">Database maintenance</a>: <a href="#Maintenance">Maintenance</a></li>
+<li><a href="#index-Database-setup-14">Database setup</a>: <a href="#Database-setup">Database setup</a></li>
+<li><a href="#index-DB-Innards-36">DB Innards</a>: <a href="#DB">DB</a></li>
+<li><a href="#index-Delete-command-21">Delete command</a>: <a href="#Delete-command">Delete command</a></li>
+<li><a href="#index-Diary-format-33">Diary format</a>: <a href="#Diary-Import">Diary Import</a></li>
+<li><a href="#index-directive_002c-attributes-5">directive, attributes</a>: <a href="#attributes">attributes</a></li>
+<li><a href="#index-directive_002c-database-4">directive, database</a>: <a href="#name-and-database">name and database</a></li>
+<li><a href="#index-directive_002c-name-3">directive, name</a>: <a href="#name-and-database">name and database</a></li>
+<li><a href="#index-directive_002c-query-6">directive, query</a>: <a href="#query">query</a></li>
+<li><a href="#index-drill_002ddown-query-10">drill-down query</a>: <a href="#query">query</a></li>
+<li><a href="#index-Editing-templates-26">Editing templates</a>: <a href="#Editing-templates">Editing templates</a></li>
+<li><a href="#index-Environment-15">Environment</a>: <a href="#Environment">Environment</a></li>
+<li><a href="#index-Export-Data-command-30">Export Data command</a>: <a href="#Export-Data-command">Export Data command</a></li>
+<li><a href="#index-Innards-35">Innards</a>: <a href="#Design">Design</a></li>
+<li><a href="#index-Innards_002c-App-39">Innards, App</a>: <a href="#App">App</a></li>
+<li><a href="#index-Innards_002c-DB-37">Innards, DB</a>: <a href="#DB">DB</a></li>
+<li><a href="#index-License-40">License</a>: <a href="#License">License</a></li>
+<li><a href="#index-Mail-session-log-command-28">Mail session log command</a>: <a href="#Mail-session-log-command">Mail session log command</a></li>
+<li><a href="#index-Main-menu-18">Main menu</a>: <a href="#Session">Session</a></li>
+<li><a href="#index-Prune-duplicates-command-23">Prune duplicates command</a>: <a href="#Prune-duplicates-command">Prune duplicates command</a></li>
+<li><a href="#index-Query-command-19">Query command</a>: <a href="#Query-command">Query command</a></li>
+<li><a href="#index-query_002c-custom-11">query, custom</a>: <a href="#query">query</a></li>
+<li><a href="#index-query_002c-drill_002ddown-9">query, drill-down</a>: <a href="#query">query</a></li>
+<li><a href="#index-query_002c-simple-7">query, simple</a>: <a href="#query">query</a></li>
+<li><a href="#index-Session-17">Session</a>: <a href="#Session">Session</a></li>
+<li><a href="#index-Setup-1">Setup</a>: <a href="#Setup">Setup</a></li>
+<li><a href="#index-simple-query-8">simple query</a>: <a href="#query">query</a></li>
+<li><a href="#index-TEmplate-commands-24">TEmplate commands</a>: <a href="#Template-commands">Template commands</a></li>
+<li><a href="#index-Update-command-22">Update command</a>: <a href="#Update-command">Update command</a></li>
+<li><a href="#index-View-mode-31">View mode</a>: <a href="#View-mode">View mode</a></li>
+</ul><!--  -->
+
+<div class="shortcontents">
+<h2>Short Contents</h2>
+<ul>
+<li><a href="#toc_Top">ETRACK</a></li>
+<li><a href="#toc_Setup">1 Setup</a></li>
+<li><a href="#toc_Session">2 Session</a></li>
+<li><a href="#toc_Diary-Import">3 Diary Import</a></li>
+<li><a href="#toc_Maintenance">4 Maintenance</a></li>
+<li><a href="#toc_Design">5 Design</a></li>
+<li><a href="#toc_License">6 License</a></li>
+<li><a href="#toc_Index">Index</a></li>
+</ul>
+</div>
+
+<div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">ETRACK</a>
+<li><a name="toc_Setup" href="#Setup">1 Setup</a>
+<ul>
+<li><a href="#Configuration-file">1.1 Configuration file</a>
+<ul>
+<li><a href="#name-and-database">1.1.1 name and database</a>
+<li><a href="#attributes">1.1.2 attributes</a>
+<li><a href="#query">1.1.3 query</a>
+<ul>
+<li><a href="#query">1.1.3.1 Simple Query</a>
+<li><a href="#query">1.1.3.2 Drill-Down Query</a>
+<li><a href="#query">1.1.3.3 Custom Query</a>
+</li></ul>
+</li></ul>
+<li><a href="#Database-setup">1.2 Database setup</a>
+<li><a href="#Environment">1.3 Environment</a>
+<li><a href="#Customization">1.4 Customization</a>
+</li></ul>
+<li><a name="toc_Session" href="#Session">2 Session</a>
+<ul>
+<li><a href="#Query-command">2.1 Query command</a>
+<li><a href="#Add-command">2.2 Add command</a>
+<ul>
+<li><a href="#Add-command">2.2.1 Restart</a>
+</li></ul>
+<li><a href="#Delete-command">2.3 Delete command</a>
+<li><a href="#Update-command">2.4 Update command</a>
+<ul>
+<li><a href="#Updating-one-entry-at-a-time">2.4.1 Updating one entry at a time</a>
+<li><a href="#Updating-marked-entries">2.4.2 Updating marked entries</a>
+</li></ul>
+<li><a href="#Prune-duplicates-command">2.5 Prune duplicates command</a>
+<li><a href="#Template-commands">2.6 Template commands</a>
+<ul>
+<li><a href="#Add-Using-Template-command">2.6.1 Add Using Template command</a>
+<li><a href="#Editing-templates">2.6.2 Editing templates</a>
+</li></ul>
+<li><a href="#Calendar-display-command">2.7 Calendar display command</a>
+<li><a href="#Mail-session-log-command">2.8 Mail session log command</a>
+<li><a href="#About-this-program-command">2.9 About this program command</a>
+<li><a href="#Export-Data-command">2.10 Export Data command</a>
+<li><a href="#View-mode">2.11 View mode</a>
+</li></ul>
+<li><a name="toc_Diary-Import" href="#Diary-Import">3 Diary Import</a>
+<ul>
+<li><a href="#Diary-Import">3.1 Diary Format</a>
+<li><a href="#Diary-Import">3.2 Importing Diary Format Data</a>
+</li></ul>
+<li><a name="toc_Maintenance" href="#Maintenance">4 Maintenance</a>
+<ul>
+<li><a href="#Maintenance">4.1 Available commands</a>
+<li><a href="#Maintenance">4.2 Usage examples</a>
+</li></ul>
+<li><a name="toc_Design" href="#Design">5 Design</a>
+<ul>
+<li><a href="#DB">5.1 DB</a>
+<ul>
+<li><a href="#DB">5.1.1 Quick History</a>
+<li><a href="#DB">5.1.2 ETRACK Meta Info</a>
+<li><a href="#DB">5.1.3 Column Definitions for <code>expenses</code></a>
+</li></ul>
+<li><a href="#App">5.2 App</a>
+</li></ul>
+<li><a name="toc_License" href="#License">6 License</a>
+<li><a name="toc_Index" href="#Index">Index</a>
+</li></ul>
+</div>
+
+</body></html>
+

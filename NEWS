@@ -1,0 +1,225 @@
+NEWS for ETRACK
+
+- 0.9911 | 2009-04-16
+  - frontend bugfixes
+    - handle error in list `read' more robustly
+    - on backend death, don't force message view before email query
+
+- 0.9910 | 2008-04-17
+  - frontend bugfix: when editing template, send correct amount to backend
+
+- 0.9909 | 2008-03-25
+  - license now GPLv3+ (see COPYING)
+  - C-g in "add using template" loop returns to sub-menu, not top-level
+
+- 0.9908 | 2007-05-03
+  - new backend command: dump
+  - dropped backend commands: dump-dates and dump-by-id
+
+- 0.9907 | 2007-04-27
+  - frontend bugfixes
+    - work around emacs EOF-on-stdin bug
+    - display amounts less than 1.00 correctly
+
+- 0.9906 | 2007-04-18
+  - emacs user interface restructured
+    - as major mode (can work w/ other buffers)
+    - use emacs' event loop
+    - already-active session can be resumed
+    - C-g most anywhere (except view mode) returns to main menu
+  - new support for exporting data
+    - new backend commands: dump-dates and dump-by-id
+    - new frontend command: export data (x)
+    - when viewing after a query, typing x exports
+      - marked entries (if marked and confirmed), otherwise...
+      - entries resulting from the query
+  - frontend changes
+    - when querying, RET no longer cancels (use C-g for that)
+    - when adding
+      - q no longer cancels (use C-g for that)
+      - C-r lets you "restart" the current record
+      - comma conversion in amount (eg. "1,23" to "1.23")
+      - no longer possible to double-specify an attcode
+    - add (2) now never uses a template
+    - command deleted: select template (t)
+    - new command: add using template (t)
+
+- 0.9905 | 2006-06-02
+  - if the backend dies you can mail the session log before exiting
+
+- 0.9904 | 2006-05-04
+  - frontend client encoding taken from language environment
+  - "etrack -b" client encoding can be specified with "-E CLIENT-ENCODING"
+
+- 0.9903 | 2006-03-25
+  - bugfix: change-attcode was broken by ETRACK 0.96
+
+- 0.9902 | 2006-01-31
+  - frontend change: when adding w/ a template, details can be edited
+
+- 0.9901 | 2006-01-28
+  - bugfix: when updating marked items, notice changes in case
+
+- 0.9900 | 2006-01-24
+  - bugfix: marking works on a tty (i.e., etrack -nw)
+  - dropped command: dump-alist
+  - dropped command: load-alist-file
+  - new support for templates
+    - backend commands
+      - templates-list
+      - template-munge OP NAME [ARGS...]
+    - frontend menu items
+      - (t) select template
+      - (T) edit templates
+    - admin MUST do "etrack -b upgrade-db" for existing installations
+  - env var EMACS overrides default "emacs" (unless it has value "t")
+  - maintenance uses files from GNU Automake 1.9.6
+
+- 0.99 | 2005-09-08
+  - frontend changes
+    - you can now "mark" entries for batch modification/update
+    - C-g no longer loses event-loop context
+  - db no longer accepts NULL value for date, amount or attcode
+
+- 0.98 | 2005-08-25
+  - bugfix: multiple configurations now counted correctly
+  - bugfix: frontend command "5" no longer hangs for zero duplicates
+  - when viewing after a query, typing 1-9 jumps to query selection
+
+- 0.97 | 2005-05-12
+  - frontend changes
+    - queries-list computation shows "thinking dots" (progress meter)
+    - "about" command starts viewing from latest NEWS item
+
+- 0.96 | 2005-03-09
+  - multiple config specification support
+    - env var ETRACK_CONFIG can now be colon-separated list
+    - frontend requests selection before main loop
+  - histogram slightly more pretty
+
+- 0.95 | 2005-01-04
+  - handle empty details list specified as `nil' (from frontend)
+
+- 0.94 | 2004-12-20
+  - new support for "etrack -nw" (no window system)
+  - new support for loading ~/.etrack.el on startup
+  - ISO-8859-1 (aka "Latin-1") characters now accepted for "Details"
+
+- 0.93 | 2004-12-19
+  - frontend changes
+    - today's date automatically inserted as default
+    - reading details (both new and update) inherits input method
+
+- 0.92 | 2004-06-22
+  - new user commands (invoked as "etrack -b COMMAND")
+    - list-attcodes
+    - import-diary-file
+  - new chapter in doc: Diary Import
+
+- 0.91 | 2004-05-31
+  - new admin command: upgrade-db
+  - admin command no longer provided: rename-catcode-to-attcode
+  - backend uses type `integer' (rather than `float') to store `amount'
+    - frontend not affected (change not visible to users)
+    - on input, ABC.XY is multiplied by 100 to produce ABCXY
+    - on display, ABCXY is divided by 100 to show ABC.XY
+    - on alist input/output, ABCXY is changed
+    - admin MUST convert existing installations using "etrack -b upgrade-db"
+
+- 0.90 | 2004-05-24
+  - menu bar disabled also when in console (non-X) mode
+  - when entering attributes, `?' displays their full names as a reminder
+  - bugfix: command `dump-alist' output now keyed by column (not tuple list)
+
+- 0.89 | 2004-02-07
+  - new chapter in manual: Maintenance
+  - etrack.el changes
+    - now does `provide'; you can use "(require 'etrack)" in ~/.emacs
+    - bugfix: full list of possible queries stays on the screen (no scroll)
+    - bugfix: cursor now ends up at bol on query output
+
+- 0.88 | 2004-02-03
+  - "etrack --version" supported
+  - "etrack --display-example-config" writes the example config to stdout
+  - "etrack --shell" is a shortcut for "etrack -b shell"
+  - README lists dependencies in terms of module names
+
+- 0.87 | 2003-01-15
+  - Bugfix: Histogram now handles negative values
+  - "etrack --help" now shows info on usage and env var dependency
+  - "etrack -b --help" now shows info on backend usage
+  - [INCOMPATIBLE CHANGE] "attributes" replace "categories"
+    - config files: "categories" -> "attributes"
+    - one-time admin command: etrack -b rename-catcode-to-attcode
+
+- 0.86 | 2002-08-17
+  - On insert, the newly inserted "index" value is displayed (useful if
+    you made a mistake and don't want to requery to find it again).
+  - When using a window-system enabled Emacs, turn off scroll bar, menu
+    bar, and tool bar.
+
+- 0.85 | 2002-08-14
+  - New backend command: shell (like repl but more human-friendly)
+  - Required Guile version now 1.4.1.6 or later in 1.4.x series
+  - Documentation provided in HTML format (but not installed)
+
+- 0.84 | 2002-01-23
+  - Bugfix: queries that return no data are now now handled w/o error
+  - When adding, history available for date and details
+  - When updating, history available for date
+  - New standard query: "(possible duplicates)"
+  - New command: prune duplicates
+  - Documentation improvements
+  - Administration
+    - Bugfix: grant/revoke now handles the associated "i" sequence
+    - New b.e. cmds: possible-duplicates, query-two-rows, import-tab-sep-file
+
+- 0.82 | 2002-01-17
+  - Custom queries (defined in the config file) are now supported
+  - Documentation (etrack.info) now included and installed
+  - Administration
+    - "etrack -c FILE" allows you to use a different config file
+    - New backend commands: dump-alist, load-alist-file, initdb, grant, revoke
+    - Configuration file is simplified ("table" directive deleted)
+
+- 0.80 | 2002-01-14
+  - New configuration field `name' is a string (see example.etrack.conf)
+  - Screen updates are smoother, no more "thinking ... please wait"
+  - Showing query by month now also displays a histogram and percentages
+  - (Administrative) "etrack -b" allows you to use the backend in cli mode
+
+- 0.6 | 2001-12-21
+  - Configuration can now be done by users using a run-time config file
+    - Database backend connection
+    - Simple queries
+    - Drill-down queries
+  - Env var ETRACK_CONFIG *must* be set to point to the config file
+  - An example configuration file is now installed in PREFIX/share/etrack
+  - You can now invoke etrack from the shell w/ command "etrack"
+  - ChangeLog file now also installed in PREFIX/share/etrack
+  - Build-time configuration is more complete
+
+- 0.4 | 2001-12-19
+  - When viewing, "m" and "M" are only available after a query
+  - New calendar command shows current month, YYYY, or MM YYYY
+  - Top-level keybindings are regularized:
+    - "1" through "4" for expense entries
+    - "c", "m", "a", "v", "q" for everything else
+  - Categories are shown for all queries (under abbreviated heading "cat")
+  - Category "startup" has been deleted
+  - Category "gas" has been replaced with "vehicle"
+  - New queries: "v/gas", "v/car", "v/moto" and "v/bike"
+
+- 0.2 | 2001-12-18
+  - Top-level menu reorganized
+  - Each top-level command now logs execution on a different "page"
+  - Queries now selected by typing a number instead of a letter
+  - After query when viewing, "m" shows by month, "M" lets you select a range
+  - When viewing, "P" and "N" switch to previous and next pages
+  - Session log (all the pages) can be mailed to anyone, not just ttn
+  - Errors are handled more gracefully (e.g., non-existent query selection)
+  - Table formatting less cluttered
+  - "About" screen now includes version info and NEWS
+  - Logging now excludes the menus
+
+- 0.0 | 2001-04-01

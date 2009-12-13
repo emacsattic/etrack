@@ -1,0 +1,84 @@
+#!/bin/sh
+
+# Copyright (C) 2001-2009 Thien-Thi Nguyen
+# This file is part of ETRACK, released under GNU GPL with
+# ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
+
+##
+# Usage: etrack [-nw] [-c CONFIG]          # use emacs interface
+#        etrack --display-example-config   # to stdout
+#        etrack --shell                    # for shell interface
+#        etrack -b --help                  # for more help
+#
+# Option "-nw" means to run Emacs in terminal mode (no X).
+# Env var EMACS specifies which Emacs to use (default "emacs").
+# If "-c CONFIG" is omitted you must set env var
+# ETRACK_CONFIG to be the name of the config file.
+##
+
+if [ x"$1" = x--help ] ; then
+    sed '/^##/,/^##/!d;/^##/d;s/^# //g;s/^#$//g' $0
+    v=$ETRACK_CONFIG
+    if [ x"$v" = x ] ; then echo '(This is currently not set.)'
+    else echo "(Current value: $v)" ; fi
+    exit 0
+fi
+
+if [ x"$1" = x--version ] ; then
+    echo etrack '|VERSION|'
+    exit 0
+fi
+
+if [ x"$1" = x--display-example-config ] ; then
+    cat /home/ttn/build/etrack/example.etrack.conf
+    exit 0
+fi
+
+if [ x"$1" = x-nw ] ; then
+    nw="$1" ; shift
+fi
+
+if [ x"$1" = x-c ] ; then
+    ETRACK_CONFIG=$2
+    export ETRACK_CONFIG
+    shift
+    shift
+fi
+
+if [ x"$ETRACK_CONFIG" = x ] ; then
+    echo ERROR: Need to set env var ETRACK_CONFIG.
+    exit 1
+fi
+
+count=0
+for f in `echo "$ETRACK_CONFIG" | sed 's/:/ /g'` ; do
+    if [ ! -r "$f" ] ; then
+        echo ERROR: ETRACK_CONFIG file not readable: $f
+        exit 1
+    fi
+    count=`expr 1 + $count`
+done
+
+if [ x"$1" = x--shell ] ; then
+    set -- '-b' 'shell'
+    if [ $count != 1 ] ; then
+        ETRACK_CONFIG="`echo $ETRACK_CONFIG | sed 's/:.*//'`"
+        echo 'NOTE: multiple configs in ETRACK_CONFIG; choosing the first:'
+        echo '      '$ETRACK_CONFIG
+    fi
+fi
+
+if [ x"$1" = x-b ] ; then               # backend
+    shift
+    be="/home/ttn/build/etrack/etrack.scm"
+    be="/home/ttn/build/etrack/pre-inst.etrack.scm" # zonkme
+    exec guile -s $be "$@"
+fi
+
+test "$EMACS" = t && unset EMACS
+${EMACS-emacs} -q $nw \
+      -l /home/ttn/build/etrack/etrack.el \
+      -f etrack-kill-window-system-crap \
+      -f etrack
+
+# etrack ends here

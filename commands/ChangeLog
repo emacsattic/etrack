@@ -1,0 +1,476 @@
+2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9911
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump.scm (dump where/id): Use `in/set'.
+
+2007-05-20  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* template-munge.scm: No longer use modules (database
+	postgres-types) and (database postgres-qcons).
+	(Guile-PG-pgtable-cannot-handle-NULL?): Delete var.
+	(template-munge): Remove mucking-with-strings kludge.
+
+2007-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump.scm: New file.
+	* dump-by-id.scm: Delete file.
+	* dump-dates.scm: Delete file.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* templates-list.scm (templates-list): Use `w/c'.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* list-queries.scm (list-queries): Also output query count.
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* check-config.scm (check-config)
+	* list-queries.scm (list-queries)
+	* query.scm (query): Update `*queries*' usage.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm (dump-dates the): New internal proc.
+	Use it for defaulting `min' and `max' dates.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* insert.scm (insert): Use `one-value'.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm (dump-dates): Use `(DK #:o/date)'.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-by-id.scm (dump-by-id): Fix bug: Don't type convert `id-list'.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-by-id.scm: New file.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm (dump-dates): Nest all output in one set of parens.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm (dump-dates): Use `mk-outspec'.
+	Format `date' as YYYY-MM-DD.
+	Use `M #:tuples-result->rows'.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm: No longer use module (database postgres-col-defs).
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* dump-dates.scm: New file.
+
+2006-05-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* grant.scm, insert.scm, revoke.scm, upgrade-db.scm: Use `Cfexec'.
+
+2006-04-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* template-munge.scm (template-munge): For `mod'
+	command, pass Emacs Lisp `nil' as Scheme #:NULL in data.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* change-attcode.scm (change-attcode): Use SQL function
+	`overlay' instead of combination of `substring' and `||'.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* change-attcode.scm (change-attcode):
+	Use `simple-query-code->pexp'.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* delete-row.scm (delete-row): For where-clause,
+	use prefix-style expression instead of string.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* template-munge.scm (template-munge): Don't use `truncate'.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* repl.scm (repl): Set `*repl?*'.
+	* template-munge.scm (template-munge): Use `fso/norepl'.
+	Remove debugging `tM #:trace-exec'.
+	Use #:NULL instead of literal string.
+
+2006-01-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* template-munge.scm: New file.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm (validate/collect): Use `fs'.
+	* change-attcode.scm (change-attcode): Likewise.
+	* shell.scm (shell): Likewise.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* templates-list.scm: New file.
+
+2006-01-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* initdb.scm (initdb): Create metainfo and template tables.
+	Also, check each `pg-exec' call and signal error unless ok.
+
+	* upgrade-db.scm (#:has-templates-table): New upgrade.
+	(upgrade-db): Add #:has-templates-table to upgrade sequence.
+
+2006-01-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* possible-duplicates.scm (possible-duplicates):
+	Use `M #:select' directly.  Also, specify #:order-by explicitly.
+
+	* query-one-row.scm (query-one-row): Use `M #:select' directly.
+	* query-two-rows.scm (query-two-rows): Likewise.
+	* query-one-row-alist.scm (query-one-row-alist): Likewise.
+
+2006-01-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm (import-tab-sep-file): Use `string-null?'.
+
+2006-01-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* insert.scm (insert): Incorporate `INSCOL' definition.
+	Rework to use `map' + some anonfuncs to compute effective data.
+
+	* update-row.scm (update-row): Use `DK #:e-user-fields'.
+
+	* upgrade-db.scm (#:uses-integer-for-amount): Use `DK #:e-user-fields'.
+	Also, use `map' + anonfunc to compute sql-tree components.
+
+2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* delete-row.scm (delete-row): Update `M' call sequence.
+	* drop.scm (drop): Likewise.
+	* initdb.scm (initdb): Likewise.
+	* reset.scm (reset): Likewise.
+	* upgrade-db.scm (#:uses-integer-for-amount): Likewise.
+
+2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* grant.scm (grant): Use `DK'.
+	* query-one-row-alist.scm (query-one-row-alist): Likewise.
+	* revoke.scm (revoke): Likewise.
+	* upgrade-db.scm (*db-design-version*): Delete data structure.
+	(define-upgrade): Use `DK'.
+	(#:has-etrackmetainfo-tab): Likewise.
+	(#:uses-integer-for-amount): Likewise.
+	(#:columns-declared-NOT-NULL): Likewise.
+	(upgrade-db): Likewise.
+
+2006-01-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* dump-alist.scm, load-alist-file.scm: Delete files.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (upgrade-db): Specify
+	"NOT NULL" in etrackmetainfo column defs.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm
+	(sql-tree): For SELECT queries, handle specified #:from.
+	(#:columns-declared-NOT-NULL): New upgrade.
+	(upgrade-db): Append #:columns-declared-NOT-NULL to upgrades list.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* grant.scm: Use module (database postgres).
+	(grant): Rewrite.
+
+	* revoke.scm: Use module (database postgres).
+	(revoke): Rewrite.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (EDO): Define immediately at top-level.
+	(make-EDO): Delete proc.
+	(upgrade-db): Update `EDO' init sequence.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* grant.scm (grant): Use `*iseq*'.
+	* revoke.scm (revoke): Likewise.
+	* upgrade-db.scm (#:uses-integer-for-amount): Likewise.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* possible-duplicates.scm (possible-duplicates): Return DUPS.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* delete-row.scm (delete-row): Use `M #:delete-rows' directly.
+
+2005-09-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (*mi*): Delete string.
+	(upgrade-db): Use `*mi*' value directly.
+
+2005-09-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: Use module (database postgres-table).
+	(METAINFO): New pgtable-worker.
+	(#:has-etrackmetainfo-table): Use `METAINFO'.
+	(upgrade-db): Init and use `METAINFO'.
+
+2005-09-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (define-upgrade): Use `assq-set!'.
+
+2005-09-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: Use module (database postgres-qcons).
+	(sql-tree): New proc.
+	(make-EDO): Manipulate trees instead of strings.
+	(#:has-attcode-not-catcode, #:has-etrackmetainfo-table,
+	#:uses-integer-for-amount): Likewise, for these upgrade methods.
+	(upgrade-db): Likewise, for this command.
+
+2005-09-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (define-upgrade): New macro.
+	(*upgrades*): Init data structure to empty list;
+	convert inline decls to top-level `define-upgrade' calls.
+
+2005-09-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm (upgrade-db): Use `check-and-upgrade'.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* possible-duplicates.scm (possible-duplicates): For this command,
+	incorporate proc `possible-duplicates' from ../etrack.scm.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* possible-duplicates.scm (possible-duplicates):
+	Output "[]" instead of empty list.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* about.scm, change-attcode.scm, char-attributes-alist.scm:
+	* check-config.scm, delete-row.scm, do-nothing.scm, drop.scm:
+	* dump-alist.scm, grant.scm, import-diary-file.scm:
+	* import-tab-sep-file.scm, initdb.scm, insert.scm, list-attcodes.scm:
+	* list-queries.scm, load-alist-file.scm, possible-duplicates.scm:
+	* query-one-row-alist.scm, query-one-row.scm, query-two-rows.scm:
+	* query.scm, redisplay-last-result-by-month.scm, repl.scm, reset.scm:
+	* revoke.scm, shell.scm, update-row.scm, upgrade-db.scm, TEMPLATE:
+	Add `define-module' form if not already.
+	Convert `COMMAND:FOO' proc to `define-command' call.
+
+	* format-specs.sed: Update to parse `define-command' syntax.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* about.scm, change-attcode.scm, char-attributes-alist.scm:
+	* check-config.scm, delete-row.scm, drop.scm, dump-alist.scm, grant.scm:
+	* import-diary-file.scm, import-tab-sep-file.scm, initdb.scm:
+	* insert.scm, list-attcodes.scm, list-queries.scm, load-alist-file.scm:
+	* possible-duplicates.scm, query-one-row-alist.scm, query-one-row.scm:
+	* query-two-rows.scm, query.scm, redisplay-last-result-by-month.scm:
+	* reset.scm, revoke.scm, shell.scm, update-row.scm, upgrade-db.scm:
+	Use `fs' and `fso'.
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* about.scm (COMMAND:about): No longer output "NEWS:\n".
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* list-queries.scm (COMMAND:list-queries): Output "EOL\n" when done.
+
+2005-04-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* update-row.scm (COMMAND:update-row): Use
+	prefix-style expression instead of string for where-clause.
+
+2005-03-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm: No longer use module (ice-9 common-list).
+	(validate/collect): Use `and-map' instead of `every'.
+
+	* load-alist-file.scm (COMMAND:load-alist-file):
+	Use `and-map' instead of `every'.
+
+2005-03-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm: No longer use module (ice-9 gap-buffer).
+	(COMMAND:import-diary-file): Use `editing-buffer'
+	w/ no body (only init), instead of `make-gap-buffer'.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* query-two-rows.scm (COMMAND:query-two-rows): Include a hint column.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* query-one-row.scm (COMMAND:query-one-row):
+	Rewrite to use tree where-clause.
+
+	* query-one-row-alist.scm (COMMAND:query-one-row-alist): Likewise.
+
+	* query-two-rows.scm (COMMAND:query-two-rows): Likewise.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: From module (database postgres),
+	select `pg-result-error-message'.
+	(TOK?): Use `pg-result-error-message'.
+	(COK?, COMMAND:upgrade-db): Use `CONN' directly.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* shell.scm: Add #:select for module (ice-9 rdelim).
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm
+	(COMMAND:import-tab-sep-file): Use `split-on-proc'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm: No longer use module (ttn find-file).
+	(COMMAND:import-diary-file): Close file port after reading.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm: No longer use module (ttn find-file).
+	From module (ice-9 gap-buffer), select also `make-gap-buffer'.
+	(COMMAND:import-tab-sep-file): Use `make-gap-buffer'.
+	Also, close file port after reading.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm: No longer use module (ttn gap-buffer).
+	Instead, use module (ice-9 gap-buffer).
+
+	* import-diary-file.scm: Likewise.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm: No longer use module (ttn edit).
+	Instead, use module (ice-9 editing-buffer).
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* update-row.scm (COMMAND:update-row): If `amount' is a string,
+	convert it to a number before conversion to integer.
+
+2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-diary-file.scm: New file.
+	* list-attcodes.scm: New file.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: For `#:uses-integer-for-amount'
+	upgrade proc, manually do DROP SEQUENCE if necessary.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: From module (database
+	postgres) select `pg-set-notice-out!'.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* upgrade-db.scm: New file.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm (COMMAND:import-tab-sep-file):
+	For `amount', multiply input value by 100 and make it exact.
+	* insert.scm (COMMAND:insert): Likewise.
+	* update-row.scm (COMMAND:update-row): Likewise.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* load-alist-file.scm: Add `define-module' form.
+	(COMMAND:load-alist-file): Check column lengths.
+	Check and sum successful record insert status.
+	Display warning if sum does not match count from file.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* dump-alist.scm (COMMAND:dump-alist): Use `write' and `display'.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* update-row.scm (COMMAND:update-row):
+	Remove superfluous `string-append'; nfc.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* reset.scm (COMMAND:reset): Rewrite to ensure eval order.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* dump-alist.scm: Add `define-module' form.
+	(COMMAND:dump-alist): Fix bug: Use `result->object-alist'.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm: Use module (srfi srfi-13).
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* change-attcode.scm: Add `define-module' form.
+	* query-one-row-alist.scm: Likewise.
+	* rename-catcode-to-attcode.scm: Likewise.
+	* shell.scm: Likewise.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* about.scm (COMMAND:about): Use `format' iteration directive.
+	* check-config.scm (COMMAND:check-config): Likewise.
+
+2004-05-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* dump-alist.scm (COMMAND:dump-alist):
+	Call `DB-SEL' w/ #t instead of "*".
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* drop.scm: For `M', use keyword commands.
+	* initdb.scm, rename-catcode-to-attcode.scm, reset.scm: Likewise.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* change-attcode.scm (INSCOL, DELROW, DB-SEL, UPDCOL):
+	Rename from `inscol', `delrow', `select' and `updcol', respectively.
+	* delete-row.scm, dump-alist.scm, insert.scm,
+	load-alist-file.scm, query-one-row-alist.scm,
+	query-one-row.scm, query-two-rows.scm, update-row.scm: Likewise.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* import-tab-sep-file.scm: Add `define-module' form.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* TEMPLATE, format-specs.sed: New files.
+
+	* about.scm, change-attcode.scm, char-attributes-alist.scm,
+	check-config.scm, delete-row.scm, do-nothing.scm, drop.scm,
+	dump-alist.scm, grant.scm, import-tab-sep-file.scm, initdb.scm,
+	insert.scm, list-queries.scm, load-alist-file.scm,
+	possible-duplicates.scm, query-one-row-alist.scm,
+	query-one-row.scm, query-two-rows.scm, query.scm,
+	redisplay-last-result-by-month.scm, rename-catcode-to-attcode.scm,
+	repl.scm, reset.scm, revoke.scm, shell.scm, update-row.scm:
+	New files.

@@ -1,0 +1,1998 @@
+2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9911
+
+	* configure.in (AC_INIT): Bump version to "0.9911" for release.
+
+2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Handle error in reading lists in a more user-friendly way.
+
+	* etrack.el (--etrack-process-filter:list-newline):
+	Add `condition-case' around `read'; display blurb on error.
+
+2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Fix bug: For export, don't allow backend to see "~/", etc.
+
+	* etrack.el (--etrack-cmd:export):
+	Expand file name before passing to backend.
+
+2008-07-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	On backend death, don't force message viewing prior to mail query.
+
+	* etrack.el (--etrack-cmd:mail-session-log): Take optional
+	arg BAILING; if non-nil, inhibit command-prep gyrations.
+	(--etrack-process-sentinel): No longer sleep; instead, integrate
+	initial message w/ y-or-n-p prompt.  Also, specify BAILING to
+	`--etrack-cmd:mail-session-log'.
+
+2008-07-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Fix bug introduced in 0.9906:
+	Clean up correctly for backend death.
+
+	* etrack.el (--etrack-process-sentinel): Don't `throw'.
+	Instead, kill the buffer associated with the process.
+	(--etrack-kill-buffer-hook-function): Fix bug:
+	Clear sentinel only if the process is still around.
+
+2008-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9910
+
+	* configure.in (AC_INIT): Bump version to "0.9910" for release.
+
+2008-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Don't require var `disttag' be set for "make dist".
+
+	* GNUmakefile.in (disttag): Delete var.
+	(dist): No longer check `$(disttag)'.
+
+2008-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Fix omission bug introduced in 0.9906:
+	When editing template, convert fraction to integer for backend.
+
+	* etrack.el (--etrack-cmd:edit-templates): If `amount' changes,
+	convert it from a fraction to an integer for the backend.
+
+2008-03-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9909
+
+	* configure.in (AC_INIT): Bump version to "0.9909" for release.
+
+2008-03-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Make C-g in add-using-template loop return to sub-menu, not top-level.
+
+	* etrack.el (--etrack-cmd:add-using-template): Specify empty string
+	as "default", when querying user for template.  Also, after doing
+	`--etrack-add-internal', stuff input to arrange for another call to
+	`--etrack-cmd:add-using-template', with empty initial query contents.
+
+2008-02-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Unbotch Git-ism: Preserve timestamps on "make dist".
+
+	* GNUmakefile.in: Rename from Makefile.in.
+	(dist): Use "cp -p" and "git ls-files" instead of "git
+	archive".  Also combine $(extradist) and $(minusdist)
+	processing into single "cp" invocation.
+	* configure.in (AC_CONFIG_FILES): Update.
+
+2008-02-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Replace CVS-isms w/ Git-isms.
+
+	* .gitignore: Rename from .cvsignore; sort.
+	* Makefile.in (minusdist): Update.
+	(dist): Test for .git/; use "git archive"; remove post tar fixup.
+	(interesting-dirs): Delete var.
+	(cvs-state-summary): Delete target.
+
+2007-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9908" for release.
+
+2007-05-03  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:export):
+	Update to use :dump backend command.
+
+2007-05-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm: From module (ice-9 accumulate),
+	also select `accumulator/one-only'.
+	(simple-query-code->pexp, read-config-file, configure):
+	Use `accumulator/one-only'.
+
+2007-05-02  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm (read-config-file): Use `open-input-file'.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9907" for release.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm (w/c): New proc.
+	(sel:*:raw, outspec:sum): Use `w/c'.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el: Throughout, use ?foo instead of integers.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-vw): For export
+	stuffing, use `?\n' instead of `return'.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-w/c): New func.
+	(--etrack-select-and-update, --etrack-update-marked)
+	(--etrack-cmd:export): Use `--etrack-w/c'.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-bk): Wait slightly after sending each chunk.
+
+2007-04-27  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-bk): Work around Emacs bug:
+	Send string to the subproc in 256-byte chunks.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9906" for release.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* Makefile.in (dist): Depend on docs.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (Session): Document session-resume feature.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (App): Update.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (Add command)
+	(Add Using Template command): Mention `C-r'.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* configure.in (AC_INIT): Add third arg.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (Session): Update menu example and blurb.
+	Add "Export Data command" to menu.
+	(Template commands): Remove @pxref in intro.
+	Remove "Selecting a template" from menu.
+	Add "Add Using Template command" to menu.
+	(Selecting a template): Delete node/subsection.
+	(Add Using Template command): New node/subsection.
+	(Export Data command): New node/section.
+	(View mode): Document `x'.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (Query command, Add command, Delete command)
+	(Calendar display command, View mode): Use @key for RET, etc.
+
+2007-04-18  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (License): Update FSF street address.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-retry-collection): New func.
+	(--etrack-collect-new-entry): Use it.
+	Also, take arg SCR instead of PRE; modify it incrementally.
+	While collecting attributes, make `C-r' retry from the top.
+	(--etrack-add-internal): Always pass scratch record (copied
+	from PRE or freshly consed) to `--etrack-collect-new-entry'.
+	Also, arrange for `C-r' to retry from the top.
+	Also, reduce output clutter and synch w/ backend output.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-collect-new-entry): Use `defun*'.
+	Remove `(block nil ...)'.  Use `return-from'.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-collect-new-entry): Take PRE directly.
+	(--etrack-add-internal): Likewise.
+	(--etracl-cmd:add-using-template): Pass SEL directly.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-menu): Display current template at (t).
+	(--etrack-collect-new-entry): Take arg PRE-P.
+	If non-nil, use :pre to stuff input fields.
+	(--etrack-add-internal): New func.
+	(--etrack-cmd:add): Use `--etrack-add-internal'.
+	(--etrack-cmd:select-template): Delete command.
+	(--etrack-cmd:add-using-template): New command.
+	(etrack-mode-map): Update binding for `t'.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-read-amount): New func.
+	(--etrack-select-and-update): Use it.
+	(--etrack-collect-new-entry): Likewise.
+	Also, no longer support `q' to cancel.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:query):
+	Determine :qmax, use it in the prompt.
+	No longer cancel querying on query number 0 (zero).
+	Instead, on out of range query number, say "No such query".
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* Makefile.in (datarootdir): New var.
+
+2007-04-17  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* autogen.sh: No longer symlink mkinstalldirs.
+	* Makefile.in (mkinstalldirs): Use install-sh.
+	(extradist): Remove mkinstalldirs.
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm: Use module (ice-9 accumulate).
+	(*queries*): Init using `accumulator/counting'.
+	(define-query): Update `*queries*' usage.
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack-mode-map): Bind `S-up' and `S-down'
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-vw toggle-mark):
+	Use local copy of :sel, update after toggling.
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:export): For date range,
+	handle "," and ";" as separator; convert to ":".
+
+2007-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-catch-quit): New macro.
+	(--etrack-cmd:query, --etrack-cmd:add, --etrack-cmd:delete)
+	(--etrack-cmd:prune-duplicates, --etrack-cmd:select-template)
+	(--etrack-cmd:upd, --etrack-cmd:edit-templates)
+	(--etrack-cmd:show-calendar, --etrack-cmd:mail-session-log)
+	(--etrack-cmd:export): Use `--etrack-catch-quit'.
+
+2007-04-15  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el: Throughout, use `--etrack-state'
+	key `:page' instead of variable `page'.
+	(etrack): No longer init `page'.
+
+2007-04-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-collect-new-entry):
+	For details collection, use `nreverse'.
+
+2007-04-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-collect-new-entry): For attributes collection,
+	if an already-chosen attribute is chosen again, don't include
+	it twice; instead, move it to the tail of the existing list.
+
+2007-04-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-vw): On `x', if there are marked entries
+	and the choice is confirmed, export them instead of the page entries.
+
+2007-04-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:add): Use `--etrack-menu'.
+
+2007-04-14  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:delete): Show entry
+	and request confirmation before deleting.
+	Also, say "entry" in message instead of "row".
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-vw): On `x', arrange to export data.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-process-filter:list-newline)
+	(--etrack-process-filter:query):
+	Elide `(or FOO "")' construct to simply FOO.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:export):
+	Add handling for "marked", "page" and "all" modes.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm (one-value): New proc.
+
+2007-04-13  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm (DK): Add #:o/date.
+	(sel:*:raw): Use `(DK #:o/date)'.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:export): No longer take args.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el: Throughout, use `--etrack-state'
+	key `:pre' instead of variable `--etrack-template'.
+	(--etrack-template): Delete var.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el: Throughout, use `--etrack-state'
+	key `:sel' instead of variable `--etrack-marked'.
+	(--etrack-marked): Delete var.
+
+2007-04-12  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el: Throughout, keep internal state in a
+	buffer-local hash table, not as properties of symbol `etrack'.
+	(--etrack-state): New var.
+	(--etrack!, --etrack:): New funcs.
+	(--etrack-process-filter:query): Keep track of
+	parent buffer and inherit `--etrack-state' from it.
+	(etrack): Init `--etrack-state' for new sessions.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack): If a session is already active, resume it.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-kill-buffer-hook-function):
+	Clear marked entries.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:export): Use `--etrack-cmd-prep'.
+	Also, add "Wrote ..." message to session log.
+
+2007-04-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack-export-file): New user var.
+	(--etrack-menu): Add "x" menu item.
+	(--etrack-sorry): Add ?x.
+	(--etrack-cmd:export): New command.
+	(etrack-mode-map): Bind `x' to `--etrack-cmd:export'.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.scm: In `define-module', use #:prefix
+	instead of #:renamer and `symbol-prefix-proc'.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack: No longer pass `--kill' to Emacs.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack-kill-window-system-crap): Inhibit splash screen.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-sorry): Use `concat'.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack): Use `load' directly.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.texi (Customization): Add from-shell
+	check to example and explanation for it.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-kill-buffer-hook-function): New func.
+	(etrack): Use `--etrack-kill-buffer-hook-function'.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:quit): Delete command.
+	(etrack): Set buffer-local `kill-buffer-hook'.
+	(etrack-mode-map): Bind `q' to a `kill-buffer' command.
+
+2007-04-10  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-menu): End sentence with full stop.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-vw): When marking, set property
+	`font-lock-face', as well.  Also, display number of marked entries.
+	Also, display allow C-n and C-p for next- and previous-line.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-sorry): New func.
+	(--etrack-vw): Finish by calling `--etrack-menu'.
+	(--etrack-cmd:query): Make interactive.
+	Also, start by calling `--etrack-cmd-prep'.
+	(--etrack-cmd:add, --etrack-cmd:prune-duplicates)
+	(--etrack-cmd:upd, --etrack-cmd:edit-templates)
+	(--etrack-cmd:show-calendar, --etrack-cmd:about): Likewise.
+	(--etrack-cmd:delete): Likewise.
+	Also, finish by calling `--etrack-menu'.
+	(--etrack-cmd:select-template)
+	(--etrack-cmd:mail-session-log): Likewise.
+	(--etrack-cmd:unmark-all): Make interactive.
+	Also, display informative message if no entries are marked.
+	(--etrack-cmd:quit): New func.
+	(etrack): Use `etrack-mode-map'.
+	Also, no longer futz w/ C-g bindings in any keymap.
+	Also, no longer do command-read/dispatch loop and clean up.
+	Instead, set some local vars and call `--etrack-menu' once.
+	(etrack-mode-map): Init unless already set.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el
+	(--etrack-select-and-update): Rename from `--etrack-cmd:update'.
+	(--etrack-update-marked): Rename from `--etrack-cmd:update-marked'.
+	(--etrack-cmd:upd): Update to use new names.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:update, --etrack-cmd:update-marked):
+	Move call of `--etrack-vw' from end of these funcs ...
+	(--etrack-cmd:upd): ... to end of this one.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-menu, --etrack-cmd-prep): New funcs.
+	(etrack): Use new funcs.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack-coding-map): New defconst.
+	(etrack): Use `etrack-coding-map'.
+	(*etrack-coding-map*): Delete defvar.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (--etrack-cmd:upd, --etrack-cmd:unmark-all)
+	(--etrack-cmd:about): New funcs.
+	(etrack): Use new funcs.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack-mode-map): New var.
+
+2007-03-11  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	* etrack.el (etrack): When quitting, clear process sentinel.
+
+2006-06-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9905" for release.
+
+2006-06-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-process-sentinel): New func.
+	(etrack): Set process sentinel.  Also,
+	catch throw from `--etrack-process-sentinel'.
+
+2006-05-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9904" for release.
+
+2006-05-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (C-exec): Delete proc.
+	(Cfexec): New proc.
+	(init!): Use `Cfexec'.
+
+2006-05-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*client-encoding*): New data structure.
+	(init!): No longer hardcode client encoding.  Instead,
+	check `*client-encoding*' and use its value if non-#f.
+	(main): Handle command line args "-E CLIENT-ENCODING".
+
+	* etrack.el (*etrack-coding-map*): New var.
+	(etrack): No longer hardcode process coding system.
+	Instead, use `default-process-coding-system' and specify
+	its mapped value to the backend on process creation.
+
+	* etrack.texi (Maintenance): Add blurb describing `-E CLIENT-ENCODING'.
+
+2006-05-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (init!): Use explicit "SET SESSION".
+
+2006-05-01  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Use module (database tmpfile).
+	(configure): Use `tmpfile' for custom queries processing.
+
+2006-03-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9903" for release.
+
+2006-01-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9902" for release.
+
+2006-01-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-collect-new-entry): Make template
+	details editable.  Also, when stuffing details input, include
+	"on empty line" in prompt.
+
+	* etrack.texi (Add command):
+	Mention that all template values are editable.
+
+2006-01-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9901" for release.
+
+2006-01-28  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:update-marked):
+	Fix bug: Use `equal' for post-change comparison.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.9900" for release.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Selecting a template): No longer mention numbers.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Allow env var EMACS to override "emacs",
+	but not if it has the value "t".
+
+	* etrack.texi (Environment): Mention env var EMACS.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:select-template): Read template name directly.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-insert-template-extrep): Take arg PREFIX;
+	insert it first.  Update callers.  Also, recenter when done.
+	(--etrack-cmd:edit-templates): Fix omission bug: Set `newp'.
+	Also, make output more visually consistent.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*repl?*): New data structure.
+	(fso/norepl): New macro.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-process-filter:list-newline): Box the read list.
+	(--etrack-bk-read-list): Unbox the filter passback value.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (DB): Update db design version.
+	Mention table `templates' and add its definition.
+
+2006-01-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Session): Add (t) and (T) to menu screenshot.
+	Also, add "Template commands" to menu.
+	(Add command): Mention default values, and templates.
+	(Template commands): New node/section.
+
+2006-01-23  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-synch): New func.
+	(--etrack-insert-template-extrep): New func.
+	(--etrack-cmd:select-template): Use `--etrack-insert-template-extrep'.
+	(--etrack-cmd:update-marked): Use `--etrack-synch'.
+	(--etrack-cmd:edit-templates): New func.
+	(etrack): Add "(T) edit templates" to the menu,
+	and dispatch on ?T to `--etrack-cmd:edit-templates'.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Move help text into comment; use sed(1) to display it.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:select-template): Use `read-string'.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (mspec->having-clause): Use `fs'.
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (amount::real): Delete data structure.
+	(sel:*:raw, outspec:sum): Use double-quotes to specify
+	literal period to effect "fractional amounts" (cents).
+
+2006-01-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-template): New var.
+	(--etrack-collect-new-entry): Use non-nil values from
+	`--etrack-template' if available, as either default values
+	for input operations, or to stuff input directly.
+	(--etrack-cmd:select-template): New func.
+	(etrack): When a template is set, mention its name in the menu.
+	Also, add menu item "(t) select template" and support for it.
+
+2006-01-21  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:add): Use `incf'.
+	(--etrack-cmd:prune-duplicates, etrack): Likewise.
+
+2006-01-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (DK): Bump #:design-version to "4".
+	Also, fix ordering bug for #:edefs `date' column: move
+	"WITH TIME ZONE" forward to be immediately after `timestamp'.
+
+2006-01-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres),
+	select also `pg-connectdb'.
+	(init!): Init `CONN' and use it to init `M'.
+
+2006-01-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (DB-SEL): Delete.
+	(o:date): Replace with its CADR.
+	(mspec->having-clause): Use `string-null?'.
+	Also, return form FOO by itself, instead of `(#:having (FOO))'.
+	(define-double-query): Use `M #:select' directly.
+	Specify #:order-by explicitly.
+	Also, move structuring from `mspec->having-clause' here.
+	(one-row-table-query): Use `M #:select' directly.
+	(init!): Update `select' backward-compatibility definition.
+	Also, use `M #:select' directly, and specify #:order-by explicitly.
+
+2006-01-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (DK ?): New internal proc.  Return it.
+	Also, add #:e-user-fields.
+	(INSCOL): Delete.
+	(init! hack-details!): Delete internal proc.
+	(init!): No longer set `INSCOL'.
+	Also, for `UPDCOL' use `map' + anonfunc to compute effective data.
+
+2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres-table),
+	select `pgtable-worker'; no longer select `pgtable-manager'.
+	(init!): Use `pgtable-worker' to init `M'.  Update callers.
+	Use #:insert-alist instead of #:insert-col-values.
+
+2006-01-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*table*, *defs*, *iseq*): Delete data structures.
+	(DK): New proc.
+	(mk-outspec, init!): Use `DK'.
+
+2006-01-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Use `read-key-sequence'.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump version to "0.99" for release.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (DB, App): Update descriptions and critique, respectively.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*defs*): Specify "NOT NULL"
+	for `date', `amount' and `attcode'.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (system-psql): Delete proc.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*iseq*): New string.
+	(init!): Use `*iseq*'.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (init!): Fix bug: For "possible duplicates"
+	query, actually invoke the command to get a result.
+
+2005-09-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (DELROW): Delete proc.
+	(init!): No longer init `DELROW'.
+
+2005-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (retired): New var.
+	(install): Under $(pkg-datadir), delete all $(retired).
+
+2005-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Update command): Expand intro blurb.
+	Move body into new subsection.  Add menu with two elements.
+	(Updating one entry at a time): New node/subsection.
+	(Updating marked entries): New node/subsection.
+	(View mode): Document marking, keys for it, and main menu effect.
+
+2005-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Modify `--etrack-marked'
+	immediately instead of via scanning after the input loop.
+
+2005-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Widen before scanning for marked entries.
+
+2005-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-marked): New var.
+	(--etrack-vw): Handle marking.  Set `--etrack-marked' when done.
+	(--etrack-cmd:query): Decorate pre-marked entries.
+	(--etrack-cmd:update-marked): New func.
+	(etrack): For `4', call `--etrack-cmd:update-marked' if necessary.
+	Also, add handling for new command `u' to unmark all entries.
+
+2005-09-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (etrack): Inhibit quitting dynamically.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump to "0.98" for release.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (View mode): Document jump-to-query-selection.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (possible-duplicates): Delete proc.
+	(require-command): New proc.
+	(init!, load-and-dispatch): Use `require-command'.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Fix bug: Dereference shell variable correctly!
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:prune-duplicates): Work around elisp/scheme
+	"nil impedence": Check type from backend and only iterate if CONSP.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*the-etrack-module*): Delete data structure.
+	(configure): Accumulate custom query defs into a temp file and load it.
+	(ACT!): New object property.
+	(define-command): New macro.
+	(load-and-dispatch): Consult `ACT!' instead of local object property.
+
+2005-08-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (fs, fso): New procs.  Use throughout.
+
+2005-05-27  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-collect-new-entry):
+	Return t if not "Everything OK?".
+	(--etrack-cmd:add): Insert DATA if a cons.
+	Otherwise, compute loop condition with it.
+
+2005-05-15  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Handle new optional arg STUFF-QUERY-P.
+	(--etrack-cmd:query): Arrange to stuff input during viewing.
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Bump to "0.97" for release.
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (etrack): If supported, arrange for Emacs exit
+	while subproc is still alive to not query for confirmation.
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Add MINP handling.
+	(etrack): For "about" command, view from beginning of region.
+
+2005-05-12  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:query): Obtain list of queries
+	synchronously, cache them, and use cache for subsequent calls.
+	Display progress dots while thinking.
+
+2005-03-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (AC_INIT): Use modern two-arg form.
+	(PACKAGE, VERSION): Delete vars.
+	(AC_CONFIG_FILES): New macro call.
+	(AC_OUTPUT): Move targets to AC_CONFIG_FILES.
+
+	* Makefile.in (PACKAGE): Delete var.
+	(TARNAME): New var. Use instead of $(PACKAGE).
+
+2005-03-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.96" for release.
+
+2005-03-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (possible-duplicates):
+	Fix omission bug: Use `string->number'.
+
+2005-03-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Environment): Mention multiple config setup; add example.
+
+2005-03-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (License): Rename node/chapter from "Copying".
+	Move to end, right before index.
+
+2005-03-09  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Handle multiple configs in ETRACK_CONFIG.
+	* etrack.el (etrack): Likewise.
+	* etrack.texi (Session): Mention selection query for multiple configs.
+
+2005-03-08  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (ice-9 common-list), no longer select `every'.
+	(define-drill-down-queries): Use `and-map' instead of `every'.
+	(configure): Likewise.
+
+2005-03-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (amount::real): Use casting operator.
+	(mspec->having-clause): Likewise.
+
+2005-03-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres-qcons),
+	no longer select `qcons-declare!'.
+	(/, !~): No longer declare these symbols as #:infix.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (annotate:histogram):
+	Add decorations for non-relevant lines.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (sel:*:raw): New var.
+	(sel:*): Use `sel:*:raw'.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (just-one-value): Delete proc.
+	(init!): Incorporate `just-one-value'.
+
+2005-02-26  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres-qcons),
+	also select `sql-quote' and `sql-pre'.
+	From module (database postgres), also select
+	`pg-result-status' and `pg-result-error-message'.
+	(C-exec): New proc.
+	(!~): Declare as #:infix using `qcons-declare!'.
+	(o:date): Rewrite as tree.
+	(mspec->having-clause): Rewrite to return tree.
+	(set-by-month!): Delete proc.
+	(define-double-query): Incorporate `set-by-month!'.
+	(simple-query-code->sql): Delete proc.
+	(simple-query-code->pexp): New proc.
+	(define-simple-query): Use `simple-query-code->pexp'.
+	(define-drill-down-queries): Use tree for where-clause.
+	(one-row-table-query): Rewrite to use tree.
+	(just-one-value): Use `C-exec'.
+	(possible-duplicates): Handle new `o:date'. Use `list*'.
+	(init!): Use `C-exec'. Form "possible duplicates" query w/ tree.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Use module (database postgres-qcons).
+	Declare `/' as an infix operator.
+	(amount::real): New var.
+	(sel:*) Use `amount::real'. Convert to prefix-style expressions.
+	(outspec:sum): Likewise.
+	(set-by-month!): Use prefix-style expression in outspec.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (CONN): New var.
+	(just-one-value): No longer take `pgdb' arg.
+	Instead, use `CONN' directly. Update callers.
+	(init!): Set `CONN'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Add #:select for module (ice-9 format).
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: No longer use module (scripts split-string-no-nulls).
+	Instead, use modules (srfi srfi-13) and (srfi srfi-14).
+	(split-on): Delete proc.
+	(split-on-proc): New proc.
+	(split-on-nl): New proc.
+	(>>table): Use `split-on-nl'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Use module (database postgres-resx).
+	From module (database postgres-table),
+	no longer select `tuples-result->table'.
+	(possible-duplicates): Use `for-each-tuple'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres), select `pg-getvalue'.
+	(just-one-value): Use `pg-getvalue'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: No longer use module (ttn display-table).
+	Use module (database postgres-resdisp).
+	From module (database postgres), select also `pg-ntuples'.
+	(>>table): Use `display-result'.
+
+2005-02-25  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Mention "-b --help" in help message.
+
+2005-01-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.95" for release.
+
+2005-01-04  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (init!): Add internal proc `hack-details!'.
+	Call it in `INSCOL' and `UPDCOL' procedure bodies.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.94" for release.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el: Require `comint'.
+	(etrack): If ~/.etrack.el exists, load it.
+
+	* etrack.texi (Setup): Add "Customization" to menu.
+	(Customization): New node/section.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (init!): Set client encoding to "iso8859_1".
+
+	* etrack.el (etrack): Set process coding system in new
+	buffer to `iso-8859-1-unix' for both decode and encode.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (simple-query-code->sql): Use `reverse!'.
+	(configure): Likewise.
+	(read-config-file): Likewise.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:update): For `Amount',
+	pass string to backend instead of number.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Add "-nw" support.
+	* etrack.texi (Session): Document "etrack -nw".
+	Also, update screenshot in example.
+
+2004-12-20  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-cmd:update): Fix bug: For `Amount',
+	present original value as a fractional, not whole, number.
+
+2004-12-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.93" for release.
+
+2004-12-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-collect-new-entry): For `Item',
+	specify that `read-string' should inherit the input method.
+	(--etrack-cmd:update): Likewise for `Details'.
+	(--etrack-cmd:mail-session-log): Likewise for `Short Message'.
+
+2004-12-19  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-collect-new-entry): For date,
+	use today as initial default value for `read-string'.
+	Also, no longer include "or RET for today" in prompt.
+
+2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.92" for release.
+
+2004-06-22  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Top): Add "Diary Import" to menu.
+	(Diary Import): New node/chapter.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.91" for release.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Top): Add menu item `Design'.
+	(Maintenance): Add upgrade-db example.
+	(Design): New node/chapter.
+	(DB): New node/section.
+	(App): New node/section.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres) no longer select
+	`pg-connectdb', `pg-connection?' and `pg-set-notice-out!'.
+	(make-meta-exec): Delete proc.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (clean): New target.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*defs*): Use `integer' for column `amount'.
+	(sel:*): Display `amount' divided by 100.
+	(outspec:sum): Likewise.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres)
+	also select `pg-connection?'.
+
+2004-05-31  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (make-meta-exec): Fix bug: Use "template1".
+
+2004-05-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (nope!): Delete proc.
+	(load-and-dispatch): Inline body of `nope!'.
+
+2004-05-30  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: From module (database postgres)
+	also select `pg-connectdb' and `pg-set-notice-out!'
+	(make-meta-exec): New proc.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.90" for release.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-vw): Bump horizontal scrolling amount to 15.
+	(etrack-kill-window-system-crap): Disable automatic scrolling.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (*defs*): Add "WITH TIME ZONE" option to `date'.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Maintenance): Describe `dump-alist' actions.
+
+2004-05-24  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: No longer use module (ice-9 rdelim).
+	No longer use module (srfi srfi-13).
+	No longer select `sql-pre' from module (database postgres-table).
+	No longer select `pg-result?' and `pg-ntuples'
+	from module (database postgres).
+	No longer use module (database postgres-resx).
+	No longer use module (database postgres-meta).
+	(*attcodes-char*): New var.
+	(o:date): Upcase sql keywords.
+	(mspec->having-clause): Use `format #f' instead of `string-append'.
+	(>>table): Use `format #t' instead of `display' + `string-join'.
+	(simple-query-code->sql): Rewrite. Include leading "WHERE ".
+	(where-qc): Delete proc. Update callers to use `simple-query-code->sql'.
+	(drill-down-spec->sql): Delete proc.
+	(define-drill-down-queries): Inline `drill-down-spec->sql' body.
+	(one-row-table-query): No longer use `string-join'.
+	(possible-duplicates): Use `o:date'.
+	(configure): Init `*attcodes-char*'.
+	(init!): No longer use `string-join'. Use `o:date'.
+	(usage): Rewrite.
+	(main): Immediately before `usage' call,
+	no longer output trailing newline.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-bk): Expect `cmd' to be keyword.
+	Throw error if not.  Format `cmd' appropriately for
+	`comint-send-string'.  Update callers recursively.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (etrack): Use "ETRACK" in welcome message.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (init!): Set `select' to value of `DB-SEL'.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: For `M', use keyword commands.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (INSCOL, DELROW, DB-SEL, UPDCOL):
+	Rename from `inscol', `delrow', `select' and `updcol', respectively.
+
+2004-05-18  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (debug-select): Delete unused proc.
+
+2004-05-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Add command): Mention `?' for attribute-input loop.
+
+2004-05-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Top): Spellfix.
+
+2004-05-13  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el (--etrack-collect-new-entry): In attributes-input
+	loop, insert a reminder list of attributes if user types `?'.
+	(etrack-kill-window-system-crap): Disable menu-bar mode
+	also in sessions without a window system.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.89" for release.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (interesting-dirs): Add "commands".
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (load-and-dispatch): Cache proc.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (load-and-dispatch): New proc.
+	(process-command): Use `load-and-dispatch'.
+	(main): Likewise.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el: Provide `etrack'.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (install): Revert change of 2004-02-03:
+	Also install etrack.el in $(pkg-datadir).
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.el: Update copyright.
+	(--etrack-bk-query): If the query result string ends with
+	a dash (character `?-'), insert another newline.
+	(--etrack-cmd:query): Fix bug: Use explicit pair of `goto-char'
+	calls instead of `recenter', to handle async buffer update.
+	(etrack-kill-window-system-crap): Make sure only one cursor visible.
+	(etrack): Add zonkme that prefers pre-inst.etrack.scm.
+
+	* Makefile.in (install): Do zonkme processing also for
+	etrack.el, etrack.scm and pre-inst.etrack.scm.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Maintenance): New node/chapter.
+	(Database setup): Move dump/load examples to "Maintenance".
+	Also, add cross reference to there.
+
+	* Makefile.in (etrack.texi): Also depend on bhelp.texi.
+	(bhelp.texi): New target.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi (Database setup): Use term "shell commands".
+	Remove shell prompt "$" from examples.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* modules.af: Update copyright.
+	(files-glob): Add "commands/*.scm".
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (install): Install the pre-inst.etrack.scm since
+	it has `*ALL*' elaborated.  Also, install the commands.
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: No longer use modules (ttn find-file)
+	and (ttn gap-buffer).
+
+2004-02-07  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Also include module (ice-9 rdelim).
+	(*the-etrack-module*): New var.
+	(*ETRACK-VERSION*, *ETRACK-DATA*): Likewise.
+	(M): Rename from `m'.
+	(table->object-alist): Delete proc var. Update `init!'.
+	(drop, create): Likewise.
+	(check-config): Move to commands/check-config.scm.
+	(reset): Move to commands/reset.scm.
+	(init!): Wrap body in a promise, force it when called.
+	(*ALL*): New var.
+	(nope!): New proc.
+	(process-command): Move everything but `quit' into its own
+	commands/FOO.scm file.  Add load/eval dispatch using `*ALL*'.
+	(usage): Rewrite to walk `*ALL*'.
+	(main): Move `repl' and `shell' handling to commands/repl.scm and
+	commands/shell.scm, respectively.  Add dispatch like `process-command'.
+
+	* commands: New directory, with its own ChangeLog.
+
+	* Makefile.in (all): Depend on pre-inst.etrack.scm.
+	(pre-inst.etrack.scm): New target.
+	(install): Add action to remove "zonkme" line from file etrack.
+
+	* etrack: Move "--shell" check after "-c" check.
+	(be): New var for backend.
+	Add "zonkme" line that prefers pre-inst.etrack.scm.
+
+2004-02-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Add `define-module' form.
+	Move into it all top-level `use-modules' forms.
+
+2004-02-06  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.88.44.22.11" for hacking.
+
+2004-02-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in (VERSION): Bump to "0.88" for release.
+
+2004-02-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: No longer consult file VERSION.
+	Instead, use token subtituted at "make install" time.
+	* etrack.scm (process-command): Likewise.
+
+	* Makefile.in (all): No longer create VERSION file.
+	(install): No longer install etrack.el in $(pkg-datadir).
+	Add version-substitution sedding for etrack and etrack.scm.
+	Create VERSION file in $(pkg-datadir).
+	(extradist): Remove VERSION.
+
+2004-02-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in (etrack.texi): Depend on version.texi.
+	(version.texi): New target.
+
+	* etrack.texi: Include version.texi.
+	(Top): Use @value instead of hardcoding.
+
+	* configure.in (CLEAN_VERSION): Delete var.
+
+2004-02-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi: Update copyright.
+	(Installation): Remove node/section.
+	(Configuration file): Mention "--display-example-config".
+	(Database setup): Cross ref to "Prune duplicates command".
+
+2004-02-03  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Add "--display-example-config" and "--shell" support.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* Makefile.in: Update copyright.
+	(CLEAN_VERSION): Delete var.
+	(dirlist-cmd): Likewise.
+	(install): No longer install ChangeLog.
+	(newtag, oldtag): Delete vars.
+	(tag, untag): Delete targets.
+	(extradist): Remove README, NEWS, TODO, AUTHORS,
+	BUGS, ChangeLog, .release.  Add INSTALL.
+	(minusdist): Remove .hi, autom4te.cache.  Add .cvsignore.
+	(dist): Rework actions to use "cvs export".
+	(rcs-state-summary): Delete target.
+	(cvs-state-summary): New target.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm (comcat): Delete unused proc.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in: Add requirement that `compile-outspec'
+	is exported from module (database postgres-table).
+
+	* etrack.scm: Also select `compile-outspec'
+	from (database postgres-table).
+	(*defs*): New var.
+	(mk-outspec): New proc.
+	(sel:*): Init using `mk-outspec'.
+	(outspec:sum): New var.
+	(sel:sum): Init using `mk-outspec' and `outspec:sum'.
+	(set-by-month!): Use `outspec:sum' and `mk-outspec'.
+	(init!): Use `*defs*'.
+	(process-command): Rewrite `list-queries' to increment vertically
+	rather than purely L,R,nl.  Also, for `about', remove pgtable.scm.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.scm: Update copyright.
+	Use "#:" in `use-modules' forms.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* .cvsignore: New file.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* autogen.sh: Update copyright.
+	No longer support --verbose option.
+	Also pass guile-specific include dir to aclocal.
+	(amprefix, amlibdir): New vars.  Use them to symlink
+	install-sh, mkinstalldirs, INSTALL and COPYING.
+
+2004-02-02  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* configure.in: Update copyright.
+	(VERSION): Bump to "0.87.599.1" for hacking.
+
+2003-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack.texi: Update version to be 0.87.
+	Add "@paragraphindent 0" directive in header block.
+	Add @subsubsection and @cindex for queries.
+	List attcodes associated with the attributes example.
+
+2003-09-05  Thien-Thi Nguyen  <ttn@surf.glug.org>
+
+	* etrack: Add "--version" support.
+	Mention "--help" and "--version" support in help text.
+
+2003-01-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in, Makefile.in, etrack, etrack.el, etrack.scm:
+	state now Rel
+
+	* etrack.scm (usage): Include "-b" in output.
+
+	* etrack.texi, modules.af, autogen.sh, example.etrack.conf:
+	state now Rel
+
+	* configure.in (VERSION): Bump to 0.87 for release.
+
+	* etrack.scm: No longer use module (ttn echo).
+	No longer use module (ttn pgtable).
+	Use module (database postgres-table).
+	Use module (database postgres-col-defs).
+	Use module (database postgres-resx).
+
+	* etrack.scm: From (database postgres-meta), select `infer-defs'
+	instead of `fields-as-scheme-defs'.  Update callers.
+
+2003-01-13  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm: Use module (database postgres-meta).
+
+	(process-command, usage): Add "rename-catcode-to-attcode".
+
+	* etrack.scm (main): Do not call `init!' on "--help".
+
+	* etrack: Add "--help" support.
+
+	* example.etrack.conf, etrack.texi, etrack.el, etrack.scm:
+	Use "attribute" instead of "category".
+
+	* Makefile.in (minusdist): Add autom4te.cache.
+
+	* etrack.texi (query): Reference `select'.
+	Document `one-row-table-query'.
+
+	* etrack.scm (annotate:histogram):
+	Rewrite to handle -ve and +ve separately.
+
+2003-01-12  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm (annotate:histogram): Clamp histogram to positive values.
+
+2002-08-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in, etrack, etrack.el, etrack.scm: state now Rel
+
+	* configure.in (VERSION): Bump to 0.86 for release.
+
+	* etrack: Call `etrack-kill-window-system-crap' right before
+	before calling `etrack' in emacs command line.
+
+	* etrack.el (etrack-kill-window-system-crap): New func.
+
+	* etrack.scm: Use module (database postgres).
+
+	(last-insert-i): New var.
+	(just-one-value): New proc.
+	(init!): For `inscol' wrap standard insert-col-values proc
+	with code to query and save the current `i' field value.
+	(process-command): For `insert', also display `last-insert-i' if not #f.
+
+2002-08-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.in (docs): Add etrack.html.
+	(etrack.html): New target.
+	(extradist): Add etrack.html.
+
+	* etrack.texi (Installation): Update required guile version.
+
+	* etrack.scm: Use modules (scripts split-string-no-nulls).
+	No longer select string-tokenize from (srfi srfi-13).
+
+	(configure): Use `eval-in-module' instead of `eval'.
+
+	(split-on): New proc.
+	(>>table): Use `split-on'.
+
+	(usage): New proc.
+	(process-command): Use `usage'.
+	Add support for "shell" command.
+
+2002-01-23  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in, etrack.texi, etrack.scm, etrack.el: state now Rel
+
+	* configure.in (VERSION): Bump to 0.84 for release.
+
+	* etrack.texi: Too many improvements to list.
+
+	* etrack.scm: Use modules (ttn find-file) and (ttn gap-buffer).
+
+	(possible-duplicates): New proc, factored from `init!'.
+	(init!): Use `possible-duplicates'.
+
+	(process-command): Handle `query-two-rows',
+	`import-tab-sep-file', and `possible-duplicates'.
+	(main): Sync usage string.
+
+	* etrack.el (--etrack-cmd;prune-duplicates): New func.
+	(etrack): Handle "(5) prune duplicates".
+
+2002-01-22  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm (init!): Add standard query "(possilbe duplicates)".
+
+	* etrack.el (--etrack-hist:date, --etrack-hist:details): New vars.
+	(--etrack-collect-new-entry, --etrack-cmd:update): Use new history vars.
+
+2002-01-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm (annotate:histogram): Use `format' padding
+	approach instead of `make-string'.
+	(process-commands): Rewrite `list-queries'.
+
+2002-01-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.texi: Update version.
+
+	* etrack.scm (>>table): Fix omission bug: Handle empty table.
+
+	* etrack.scm (system-psql): New proc.
+	(process-command): Use `system-psql' for `grant' and `revoke'.
+	Fix bug: For `grant' and `revoke', also operate on `expenses_i_seq'.
+
+2002-01-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in: state now Rel
+
+	* configure.in (VERSION): Bump to 0.82 for release.
+
+	* Makefile.in: state now Rel
+
+	* Makefile.in (extradist): Add etrack.info.
+
+	* example.etrack.conf, etrack.scm, etrack.texi, etrack: state now Rel
+
+	* example.etrack.conf (database): Update.
+	(table): Delete.
+
+	* etrack.texi (Database setup): Expand.
+
+	* etrack.scm (read-etrack-config): New proc, pulled from `init!'.
+	(init!): Use `read-etrack-config'.
+	(process-command): Handle `initdb'.
+	(main): Delay `init!' call if command is `initdb'.
+	Update help message.
+
+	* etrack.scm (*table*): Re-introduce var.
+	(init!): Use `*table*'.
+	(process-command): Handle `grant' and `revoke'.
+	(main): Update help message.
+
+	* Makefile.in (infodir): New var.
+	(docs, etrack.info): New targets.
+	(install): Also make dir $(infodir) and install etrack.info there.
+
+	* etrack.texi: New file.
+
+2002-01-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack: Accept "-c FILE", setting env var ETRACK_CONFIG to FILE.
+
+	* etrack.scm (*table*): Delete this global var.
+	(configure): No longer check for `table'.
+	No longer set `*table*'.
+	(check-config): No longer report on `*table*'.
+	(init!): Hardcode table to be "expenses".
+	(process-command, main): Handle `load-alist-file'.
+
+	* etrack.scm (process-command): Handle `dump-alist'.
+	(main): Sync help message w/ available commands.
+
+	* etrack.scm (reset, drop, create): Comment-in these disabled procs.
+
+	* example.etrack.conf: Add example custom query.
+
+	* etrack.scm (define-internal-queries!): Delete.
+	(one-row-table-query): New proc.
+	(configure): Handle `custom' query type.
+	(init!): No longer call `define-internal-queries!'.
+
+2002-01-14  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in: state now Rel
+
+	* configure.in (VERSION): Bump to 0.80 for release.
+
+	* etrack.el, Makefile.in, etrack, etrack.scm, autogen.sh,
+	modules.af: state now Rel
+
+	* configure.in:
+	Rewrite guile and module checks using new autoconf macros.
+
+	* Makefile.in (extradist): Add aclocal.m4 and modules.af.m4.
+
+	* modules.af, autogen.sh: New file.
+
+	* example.etrack.conf: state now Rel
+
+	* example.etrack.conf: Add `name' field.
+
+	* etrack, configure.in, Makefile.in, etrack.scm, etrack.el:
+	Update copyright.
+
+	* etrack.el (--etrack-collect-new-entry): Renamed from
+	`etrack-collect-new-entry'.  No longer take arg.
+
+	(--etrack-bk, --etrack-process-filter:list-newline,
+	--etrack-bk-read-list, --etrack-cats, --etrack-vw,
+	--etrack-process-filter:query, --etrack-bk-query,
+	--etrack-cmd:query, --etrack-cmd:add, --etrack-cmd:delete,
+	--etrack-cmd:update, --etrack-cmd:show-calendar,
+	--etrack-cmd:mail-session-log): New funcs, mostly pulled
+	out from `etrack'.
+
+	(etrack): Rewrite using new funcs.
+	Compute buffer name and main menu welcome text
+	from config file `name' parameter.
+
+	* etrack.scm: No longer use module (ttn stringutils).
+	Use module (srfi srfi-13).
+
+	(*name*): New global var.
+	(comcat, bad-config-error, define-sinmple-query,
+	define-internal-queries!): Rewrite using `string-join'.
+
+	Use module (ice-9 format).
+
+	(annotate:histogram): New proc.
+	(>>table): Now take rest-arg `options'.
+	Handle `histogram' option.
+
+	(configure): Fix syntax error.
+	Check for key `name', set `*name*' if found.
+
+	(process-command): No longer handle `list-categories'.
+	Handle `char-categories-alist'.
+	For `query' and `query-one-row', output "EOQ\n" at end.
+	For `redisplay-last-result-by-month', annotate w/ histogram.
+	Handle `query-one-row-alist', factored from `query-one-row'.
+
+2001-12-30  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack: Handle "-b" option.
+
+2001-12-21  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in, Makefile.in, example.etrack.conf, etrack,
+	etrack.el, etrack.scm: state now Rel
+
+	* configure.in (VERSION): Bump to 0.6 for release.
+
+	* Makefile.in (install): Also install example.* in $(pkg-datadir).
+
+	* example.etrack.conf: New file.
+
+	* etrack: Signal error if env var `ETRACK_CONFIG' not set,
+	or if it points to a non-readable file.
+
+	* etrack.el (etrack): Signal error if env var `ETRACK_CONFIG' not set.
+
+	* etrack.scm (init!): No longer hardcode config file.
+	Instead, get it from env var `ETRACK_CONFIG'.
+
+	* etrack.scm: Move all queries except "who owes what?" to config file.
+
+	(*db*, *table*, *categories*, m, inscol, delrow, debug-select,
+	updcol, table->object-alist, drop, create): Set in `init!'.
+
+	(*catcodes*, *drill-down-categories*): New vars.
+
+	(non-drill-down-categories, category->catcode,
+	bad-config-error, simple-query-code->sql, where-qc,
+	define-simple-query, drill-down-spec->sql,
+	define-drill-down-queries, define-internal-queries!,
+	configure, read-config-file, check-config, init!): New procs.
+
+	(process-command): Support `check-config FILE'.
+	Use new abstractions in various places.
+
+	(main): If not doing "check-config", call `init!'.
+
+2001-12-20  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.el (etrack): Pass "--debug" to etrack.scm invocation.
+
+	* etrack.el (etrack): Locally bind `scroll-step' to 1.
+
+	* etrack.el (etrack-forward-page-ignore-narrow,
+	etrack-backward-page-ignore-narrow): Delete.
+	(etrack): Inline deleted funcs.  Also, no longer insert fortune
+	cookie on page 0.
+
+	* configure.in: Add checks for guile, guile-config, guile-pg,
+	ttn-pers-scheme and emacs.
+
+	* configure.in (VERSION): Bump to 0.5.TIMESTAMP for development.
+
+	* Makefile.in (INSTALL_SCRIPT): New var.
+	(install): Also install etrack in bindir.
+	Also install ChangeLog in pkg-datadir.
+
+	* etrack: Add copyright, version control tags.
+
+	* etrack: New file.
+
+2001-12-19  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.in (sbindir, libexecdir, sysconfdir,
+	sharedstatedir, localstatedir, libdir, infodir, mandir,
+	includedir, oldincludedir, LN_S): Delete these unused vars.
+
+	* etrack.scm (process-command): Fix version display bug: Show
+	contents of VERSION file instead of sourcing it as a shell script.
+
+2001-12-19  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* configure.in, etrack.scm, etrack.el, Makefile.in: state now Rel
+
+	* configure.in (VERSION): Bump to 0.4 for release.
+
+	* etrack.scm (*categories*): Rename from `categories'.
+	Delete `gas' and `startup'.  Add `vehicle'.
+
+	(*slash-expanded-categories*): New var.
+
+	("all no rent"): Rename query from "all no rent/startup".
+
+	("vehicle", "v/gas", "v/car", "v/moto", "v/bike"): New queries.
+
+2001-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm:
+	For module (ttn pgtable), add `sql-pre' to selection list.
+
+	(process-command): Add `change-catcode' support.
+	(main): Sync w/ `process-command'.
+
+	* etrack.el (etrack): Use mnemonic keybindings for top-level menu.
+	Add calendar display command.
+
+	* etrack.scm (sel:idad): Delete.
+	(sel:*): Use "cat" for `catcode'.
+	(define-double-query): Use `sel:*'.
+
+	* etrack.el (etrack): Internal func `vw' now accepts optional arg,
+	which enables the "m" and "M" commands.
+
+	* Makefile.in (all): Write VERSION.
+	(install): Also install etrack.el in $(pkg-datadir).
+
+	* configure.in: No longer source ./VERSION; instead, set
+	vars `PACKAGE' and `VERSION' in this file.
+
+	* Makefile.in (install): Echo $(VERSION) into installed
+	file instead of copying ./VERSION.
+
+2001-12-18  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* Makefile.in: state now Rel
+
+	* Makefile.in (IOK, pkg-datadir): New vars.
+	(install): New target.
+
+	* Makefile.in (check): New target.
+
+	* configure.in, etrack.el, etrack.scm: state now Rel
+
+	* etrack.el, etrack.scm: Use standard version control tags; nfc.
+
+	* Makefile.in: Add version control tags.
+	Add copyright.
+
+	(CLEAN_VERSION, dirlist-cmd, newtag, oldtag, dd, extradist, minusdist,
+	disttag, interesting-dirs): New vars.
+
+	(help, tag, untag, dist, rcs-state-summary): New targets.
+
+	* configure.in: Add version control tags.
+
+	(AC_INIT): Look for etrack.scm instead of src/.
+	(CLEAN_VERSION): New configure-substituted var.
+
+	* etrack.el (etrack): Update hard-coded paths.
+
+	* etrack.scm (process-command): Update hard-coded paths.
+
+	* etrack.el (etrack): Insert "page 0" on page 0.
+	Also, insert fortune cookie.
+
+	* etrack.el (etrack): Do viewing after update.
+	Make top-level menu more concise.
+
+	* etrack.el (etrack): Time stamp choice, not page presentation.
+
+2001-12-17  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.el (etrack): Include page number w/ time stamp.
+
+	* etrack.el (etrack): Post-process query results to make more legible.
+
+	* etrack.scm:
+	Fix omission bug: Include `mapconcat' in module selection list.
+
+	* etrack.scm: In `use-modules' forms, use `:select' clause.
+
+	* etrack.scm: No longer jam %load-path for ttn-pers-scheme-0.28.
+
+	* etrack.el (etrack): Make top-level menu more concise.
+
+	* configure.in (AC_PROG_INSTALL, AM_PATH_LISPDIR): New macro calls.
+
+2001-12-16  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.el (etrack): Reorg top-level menu.
+
+	* etrack.el (etrack): Use consistent markup syntax in top-level menu.
+
+	* etrack.el (etrack-forward-page-ignore-narrow,
+	etrack-backward-page-ignore-narrow): New commands.
+	(etrack): Use new page for each top-level command.  Handle mailing
+	to arbitrary recipients.  When viewing, "P" and "N" now select
+	previous and next pages of the session log, respectively.  After
+	query when viewing, "M" queries for month spec.  After some
+	top-level commands, now do viewing.
+
+	* etrack.scm: Jam %load-path for ttn-pers-scheme-0.28.
+
+	(mspec->having-clause): New proc.
+	(set-by-month!): Now return 1-ary proc, which handles a month spec.
+
+	(>>table): New proc.
+	("all", "all no rent/startup", define-double-query,
+	process-command): Use `>>table'.
+
+	(process-command): For query, display query name before results.
+	Also, call `*by-month-query*' with month spec.
+	For update, handle new (ttn pgtable) time conversion convention.
+	For "about", also include NEWS.
+	For "repl", wrap repl in `error-catching-loop'.
+
+2001-12-15  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm (process-command): Echo "BY MONTH" when
+	doing `redisplay-last-result-by-month'.
+
+	* etrack.el (etrack): When viewing, add support for `m'
+	to show last query by month.
+
+	* etrack.scm (*by-month-query*): New var.
+	(set-by-month!): New proc.
+	("all", "all no rent/startup", define-double-query): Call
+	`set-by-month!' to prepare for `redisplay-last-result-by-month'.
+	(process-command): Support `redisplay-last-result-by-month'.
+	(main): Support `redisplay-last-result-by-month'.
+
+	* etrack.el (etrack):
+	When querying, read string instead of single-char.
+
+	* etrack.scm (process-command):
+	When doing `about', also include version info.
+
+	* etrack.scm (process-command): List queries using numbers,
+	startig at 1, instead of letters.
+
+2001-12-03  Thien-Thi Nguyen  <ttn@giblet.glug.org>
+
+	* etrack.scm: Comment; nfc.
+
+2001-05-21  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.scm (*tdef*): Use new format.
+	(debug-select): New proc.
+
+2001-04-25  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.scm (main): Use `identity' instead of `id'.
+
+2001-04-04  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.scm: No longer modify %load-path.
+
+2001-03-31  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.el (etrack): Kludge around letter-only limit (for now).
+
+2001-03-22  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.el (etrack-collect-new-entry): No longer support `?'.
+	(etrack): Add handling for update.
+
+	* etrack.scm (serial): No longer define this db-col-type.
+
+	(updcol, table->object-alist): New procs.
+
+	(process-command): Add handling for
+	`emacs-query-one-row' and `update-row'.
+
+	* etrack.el (etrack): Handle deletion.
+
+	* etrack.scm (delrow): New proc.
+	(process-command): Handle "delete-row".
+
+	* etrack.scm (bool): Remove this db-col-type definition.
+	(serial): Add this db-col-type definition.
+	(*tdef*): Add new field `i', of type `serial'.
+	(insval): Delete.
+	(inscol): New proc.
+	(sel:idad): Renamed from `sel:dad', now includes `i'.
+	(sel:*): Now includes `i'.
+	(process-command): Use `inscol' instead of `insval'.
+
+2001-03-12  Thien-Thi Nguyen  <ttn@revel.glug.org>
+
+	* etrack.el (etrack): Rework to use comint mode.
+
+	* etrack.scm (process-command): Add `quit' handling.
+	Remove `(exit 0)' except for `quit'.
+
+	(main): Handle "repl".
+
+	* etrack.scm: Call `main' w/ command-line.
+
+	(main): New proc.
+
+	* etrack.el (etrack): Do not generate new buffer.
+	In add cycle, also display add sequence number.
+
+	* etrack.scm (process-command):
+	New proc, made from all `case cmd' forms.
+	(cl, cmd): Move into `let' block.
+	("who owes what?"): Simplify output table field names.
+
+	* etrack.el (etrack-collect-new-entry): Ask for amount first.
+	If input is empty string, return nil.
+	(etrack): When adding new entries, loop until cancelled.
+
+	* etrack.el (etrack): Add support for buffer viewing from main menu.
+
+	* etrack.scm: Also use module (ttn stringutils).
+	(comcat): New proc.
+	(sel:dad, sel:*, sel:sum, o:date): New string constants.
+
+	("all no rent/startup", "who owes what?"): New queries.
+	("everything"): Rename this query to "all".
+	Use `sel:*' and `o:date'.
+
+	(define-double-query): Use `sel:dad', `o:date', `sel:sum'.
+
+2001-03-10  thi  <ttn@revel.glug.org>
+
+	* etrack.el (etrack-collect-new-entry): Use `read-char-exclusive'.
+	(etrack): Merge menu item 2 into menu item 3.
+	Use `read-char-exclusive'.
+
+	* etrack.scm (drop, reset):
+	Comment these out to prevent stupid accidents.
+
+	Rewrite all queries.
+
+	For "list-queries" handling, display two queries per line.
+
+	(define-double-query): New proc.
+
+	* etrack.scm: When handling "query", also display query name.
+
+	* etrack.scm (*tdef*): Rename `categories' to `catcode'.
+	(insert): Delete this proc.  When handling "insert",
+	use `insval' directly.
+	For seed queries, look for category code (first letter of
+	category name) instead of category.
+
+	* import-expenses-txt.el: Add copyright.
+
+	* import-expenses-txt.el: New file.
+
+	* etrack.el (etrack-collect-new-entry): Collect
+	catcode instead of categories.
+
+	* etrack.scm (categories): Update.
+
+	* etrack.scm: Handle `drop' command.
+
+2001-03-08  thi  <ttn@revel.glug.org>
+
+	* etrack.scm: Add some canned queries.
+
+	* etrack.el (etrack):
+	Wrap `scroll-up' and `scroll-down' with `ignore-errors'.
+
+	* etrack.scm: Rewrite seed queries to be table-driven.
+
+	* etrack.scm, etrack.el: New file.
+
+	* Makefile.in, configure.in: New file.
+
