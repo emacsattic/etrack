@@ -1,6 +1,6 @@
 ;;; query-two-rows.scm --- query two rows
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -16,6 +16,6 @@
                           sel:*:raw)
                 #:where `(or (= i ,(car p))
                              (= i ,(cdr p)))))
-    (fso "\nEOQ\n\n")))
+    (fso "~%EOQ~%~%")))
 
 ;;; query-two-rows.scm ends here

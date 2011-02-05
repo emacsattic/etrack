@@ -1,6 +1,6 @@
 ;;; list-queries.scm --- list queries in two columns
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -18,7 +18,7 @@
             (or last? (out i2 (caar c2)))
             (newline)
             (loop (1+ i1) (cdr c1) (1+ i2) (or last? (cdr c2)))))))
-  (fso "~A\n" (*queries* #:count))
-  (fso "EOL\n"))
+  (fso "~A~%" (*queries* #:count))
+  (fso "EOL~%"))
 
 ;;; list-queries.scm ends here

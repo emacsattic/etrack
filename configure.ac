@@ -1,10 +1,10 @@
-## configure.in for ETRACK
+## configure.ac for ETRACK
 
-## Copyright (C) 2001-2009 Thien-Thi Nguyen
+## Copyright (C) 2001-2009, 2011 Thien-Thi Nguyen
 ## This file is part of ETRACK, released under GNU GPL with
 ## ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
-AC_INIT([ETRACK],[0.9911],[ttn@gnuvola.org])
+AC_INIT([ETRACK],[0.9913],[ttn@gnuvola.org])
 
 #
 # Guile
@@ -39,4 +39,4 @@ AC_CONFIG_FILES([GNUmakefile])
 
 AC_OUTPUT
 
-## configure.in ends here
+## configure.ac ends here

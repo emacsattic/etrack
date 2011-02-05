@@ -1,9 +1,8 @@
-This is etrack.info, produced by makeinfo version 4.11.96 from
-etrack.texi.
+This is etrack.info, produced by makeinfo version 4.13 from etrack.texi.
 
 This file documents the ETRACK program.
 
-Copyright 2002-2009 Thien-Thi Nguyen
+Copyright 2002-2009, 2011 Thien-Thi Nguyen
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -18,7 +17,7 @@ ETRACK
 This document describes how to setup and use ETRACK, a package to track
 expenses: query, add, delete, update.
 
-This document applies to ETRACK 0.9911.
+This document applies to ETRACK 0.9913.
 
 * Menu:
 
@@ -76,14 +75,34 @@ with the shell command `etrack --display-example-config'.
 
 * Menu:
 
+* socket directory::
 * name and database::
 * attributes::
 * query::
 
 
-File: etrack.info,  Node: name and database,  Next: attributes,  Up: Configuration file
+File: etrack.info,  Node: socket directory,  Next: name and database,  Up: Configuration file
 
-1.1.1 name and database
+1.1.1 socket directory
+----------------------
+
+The `sockdir' names the directory where the PostgreSQL database keeps
+its connection socket (typically named `.s.PGSQL.5432').  This should
+be an absolute filename.  For example:
+
+     (sockdir . "/usr/local/var/etrack")
+
+*Note Maintenance::, for how to set this value when migrating the
+database from one cluster to another.
+
+*NB*: For now, this directive is optional.  However, in the ETRACK
+release after 2011-05-01, it will be mandatory.  Update your
+configuration file as soon as possible to avoid surprises later!
+
+
+File: etrack.info,  Node: name and database,  Next: attributes,  Prev: socket directory,  Up: Configuration file
+
+1.1.2 name and database
 -----------------------
 
 The `name' is a for-human-consumption string that identifies the
@@ -97,7 +116,7 @@ quoted.  For example:
 
 File: etrack.info,  Node: attributes,  Next: query,  Prev: name and database,  Up: Configuration file
 
-1.1.2 attributes
+1.1.3 attributes
 ----------------
 
 The `attributes' directive defines the attributes which, in turn, define
@@ -119,7 +138,7 @@ Here, the attcodes would be v, h, f, u, e, r, m and i.
 
 File: etrack.info,  Node: query,  Prev: attributes,  Up: Configuration file
 
-1.1.3 query
+1.1.4 query
 -----------
 
 There are several flavors of query: simple, drill-down and custom.  The
@@ -127,7 +146,7 @@ first two rely solely on the attribute codes.  By default, a simple
 query is created for each of the attributes, so you don't have to
 define them yourself.
 
-1.1.3.1 Simple Query
+1.1.4.1 Simple Query
 ....................
 
 The simple query has the form:
@@ -148,7 +167,7 @@ the query, and may include embedded spaces.  For example:
                "food not fun"        f!e
                ))
 
-1.1.3.2 Drill-Down Query
+1.1.4.2 Drill-Down Query
 ........................
 
 The drill-down query has the form:
@@ -172,7 +191,7 @@ DETAIL".  For example:
                         "moto"
                         "bike")))
 
-1.1.3.3 Custom Query
+1.1.4.3 Custom Query
 ....................
 
 Lastly, the custom query has the form:
@@ -914,11 +933,10 @@ PostgreSQL documentation.
 4.1 Available commands
 ======================
 
-Some of the following commands are very dangerous, e.g., `drop' and
-`reset'.  Be careful with these!  Most require that a configuration
-file be specified (*note Configuration file::).  Two in particular are
-interactive: `repl' and `shell'; the rest do their job, display their
-results to stdout, and exit when done.
+Some of the following commands can be very dangerous; be careful!  Most
+require that a configuration file be specified (*note Configuration
+file::).  Two in particular are interactive: `repl' and `shell'; the
+rest do their job, display their results to stdout, and exit when done.
 
 Usage: etrack -b [-E CLIENT-ENCODING] CMD [ARG]
 where CMD is one of:
@@ -929,7 +947,6 @@ char-attributes-alist          -- display attributes keyed by char number
 check-config FILE              -- check FILE and summarize, or signal error
 delete-row ROW                 -- delete ROW from the table
 do-nothing                     -- do absolutely nothing at all, truthfully
-drop                           -- drop the expenses table
 dump (FILE TYPE SPEC)          -- dump to FILE based on date or id
 grant USER                     -- grant db access to a USER
 import-diary-file FILE         -- import diary-format data from FILE
@@ -945,7 +962,7 @@ query-two-rows (ROW-1 . ROW-2) -- query two rows
 query NUM                      -- submit a query and display the result
 redisplay-last-result-by-month MSPEC -- as advertized
 repl                           -- for use primarily by the emacs front end
-reset                          -- drop and create the db tables
+replicate DIR                  -- copy database to DIR
 revoke USER                    -- revoke db access from a USER
 shell                          -- like repl but w/ prompt and no parens required
 template-munge (OP NAME [ARGS...]) -- add/del/mod a template by NAME
@@ -965,7 +982,7 @@ alist format.  The alist keys are the table's column names.
 
 Loading data into an existing database:
 
-     etrack -b reset                  # omit if you just want to append
+     # NOTE: This does not replace the current data.
      etrack -b load-alist-file DUMP
 
 Note that the "i" field is not preserved when doing `load-alist-file'.
@@ -974,6 +991,11 @@ Note that the "i" field is not preserved when doing `load-alist-file'.
 Upgrading the database schema (*note DB::):
 
      etrack -b upgrade-db
+
+Migrating the database to another cluster (*note socket directory::):
+
+     etrack -b replicate NEW-DIR
+     sed '/sockdir/s|. ".*"|. "NEW-DIR"|' CONFIG-FILE > NEW-CONFIG-FILE
 
 
 File: etrack.info,  Node: Design,  Next: License,  Prev: Maintenance,  Up: Top
@@ -1112,6 +1134,7 @@ Index
 * directive, database:                   name and database.    (line  6)
 * directive, name:                       name and database.    (line  6)
 * directive, query:                      query.                (line  6)
+* directive, sockdir:                    socket directory.     (line  6)
 * drill-down query:                      query.                (line 35)
 * Editing templates:                     Editing templates.    (line  6)
 * Environment:                           Environment.          (line  6)
@@ -1139,37 +1162,38 @@ Index
 
 
 Tag Table:
-Node: Top319
-Node: Setup843
-Node: Configuration file1462
-Node: name and database2350
-Node: attributes2782
-Node: query3483
-Node: Database setup6190
-Node: Environment6910
-Node: Customization8228
-Node: Session9345
-Node: Query command11337
-Node: Add command12440
-Node: Delete command13599
-Node: Update command14049
-Node: Updating one entry at a time14581
-Node: Updating marked entries15477
-Node: Prune duplicates command16517
-Node: Template commands17416
-Node: Add Using Template command18083
-Node: Editing templates18769
-Node: Calendar display command19758
-Node: Mail session log command20253
-Node: About this program command20778
-Node: Export Data command21067
-Node: View mode22536
-Node: Diary Import26081
-Node: Maintenance30255
-Node: Design34120
-Node: DB34407
-Node: App35822
-Node: License36751
-Node: Index37523
+Node: Top322
+Node: Setup846
+Node: Configuration file1465
+Node: socket directory2374
+Node: name and database3039
+Node: attributes3496
+Node: query4197
+Node: Database setup6904
+Node: Environment7624
+Node: Customization8942
+Node: Session10059
+Node: Query command12051
+Node: Add command13154
+Node: Delete command14313
+Node: Update command14763
+Node: Updating one entry at a time15295
+Node: Updating marked entries16191
+Node: Prune duplicates command17231
+Node: Template commands18130
+Node: Add Using Template command18797
+Node: Editing templates19483
+Node: Calendar display command20472
+Node: Mail session log command20967
+Node: About this program command21492
+Node: Export Data command21781
+Node: View mode23250
+Node: Diary Import26795
+Node: Maintenance30969
+Node: Design34890
+Node: DB35177
+Node: App36592
+Node: License37521
+Node: Index38293
 
 End Tag Table

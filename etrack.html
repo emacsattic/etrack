@@ -3,7 +3,7 @@
 <title>ETRACK</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="ETRACK">
-<meta name="generator" content="makeinfo 4.11.96">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <meta http-equiv="Content-Style-Type" content="text/css">
@@ -21,9 +21,84 @@
 </head>
 <body>
 <h1 class="settitle">ETRACK</h1>
+<div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">ETRACK</a>
+<li><a name="toc_Setup" href="#Setup">1 Setup</a>
+<ul>
+<li><a href="#Configuration-file">1.1 Configuration file</a>
+<ul>
+<li><a href="#socket-directory">1.1.1 socket directory</a>
+<li><a href="#name-and-database">1.1.2 name and database</a>
+<li><a href="#attributes">1.1.3 attributes</a>
+<li><a href="#query">1.1.4 query</a>
+<ul>
+<li><a href="#query">1.1.4.1 Simple Query</a>
+<li><a href="#query">1.1.4.2 Drill-Down Query</a>
+<li><a href="#query">1.1.4.3 Custom Query</a>
+</li></ul>
+</li></ul>
+<li><a href="#Database-setup">1.2 Database setup</a>
+<li><a href="#Environment">1.3 Environment</a>
+<li><a href="#Customization">1.4 Customization</a>
+</li></ul>
+<li><a name="toc_Session" href="#Session">2 Session</a>
+<ul>
+<li><a href="#Query-command">2.1 Query command</a>
+<li><a href="#Add-command">2.2 Add command</a>
+<ul>
+<li><a href="#Add-command">2.2.1 Restart</a>
+</li></ul>
+<li><a href="#Delete-command">2.3 Delete command</a>
+<li><a href="#Update-command">2.4 Update command</a>
+<ul>
+<li><a href="#Updating-one-entry-at-a-time">2.4.1 Updating one entry at a time</a>
+<li><a href="#Updating-marked-entries">2.4.2 Updating marked entries</a>
+</li></ul>
+<li><a href="#Prune-duplicates-command">2.5 Prune duplicates command</a>
+<li><a href="#Template-commands">2.6 Template commands</a>
+<ul>
+<li><a href="#Add-Using-Template-command">2.6.1 Add Using Template command</a>
+<li><a href="#Editing-templates">2.6.2 Editing templates</a>
+</li></ul>
+<li><a href="#Calendar-display-command">2.7 Calendar display command</a>
+<li><a href="#Mail-session-log-command">2.8 Mail session log command</a>
+<li><a href="#About-this-program-command">2.9 About this program command</a>
+<li><a href="#Export-Data-command">2.10 Export Data command</a>
+<li><a href="#View-mode">2.11 View mode</a>
+</li></ul>
+<li><a name="toc_Diary-Import" href="#Diary-Import">3 Diary Import</a>
+<ul>
+<li><a href="#Diary-Import">3.1 Diary Format</a>
+<li><a href="#Diary-Import">3.2 Importing Diary Format Data</a>
+</li></ul>
+<li><a name="toc_Maintenance" href="#Maintenance">4 Maintenance</a>
+<ul>
+<li><a href="#Maintenance">4.1 Available commands</a>
+<li><a href="#Maintenance">4.2 Usage examples</a>
+</li></ul>
+<li><a name="toc_Design" href="#Design">5 Design</a>
+<ul>
+<li><a href="#DB">5.1 DB</a>
+<ul>
+<li><a href="#DB">5.1.1 Quick History</a>
+<li><a href="#DB">5.1.2 ETRACK Meta Info</a>
+<li><a href="#DB">5.1.3 Column Definitions for <code>expenses</code></a>
+</li></ul>
+<li><a href="#App">5.2 App</a>
+</li></ul>
+<li><a name="toc_License" href="#License">6 License</a>
+<li><a name="toc_Index" href="#Index">Index</a>
+</li></ul>
+</div>
+
+
+
+<!--  -->
 <div class="node">
-<p><hr>
 <a name="Top"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Setup">Setup</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
@@ -34,7 +109,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <p>This document describes how to setup and use ETRACK, a package to track
 expenses: query, add, delete, update.
 
-<p>This document applies to ETRACK 0.9911.
+<p>This document applies to ETRACK 0.9913.
 
 <ul class="menu">
 <li><a accesskey="1" href="#Setup">Setup</a>:                Preparing to use ETRACK. 
@@ -49,8 +124,8 @@ expenses: query, add, delete, update.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Setup"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Session">Session</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -77,8 +152,8 @@ skip to the next chapter which explains how to use ETRACK (see <a href="#Session
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Configuration-file"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Database-setup">Database setup</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
 
@@ -102,23 +177,50 @@ file, which you might find easier to peruse directly, with the shell command
 <code>etrack --display-example-config</code>.
 
 <ul class="menu">
-<li><a accesskey="1" href="#name-and-database">name and database</a>
-<li><a accesskey="2" href="#attributes">attributes</a>
-<li><a accesskey="3" href="#query">query</a>
+<li><a accesskey="1" href="#socket-directory">socket directory</a>
+<li><a accesskey="2" href="#name-and-database">name and database</a>
+<li><a accesskey="3" href="#attributes">attributes</a>
+<li><a accesskey="4" href="#query">query</a>
 </ul>
 
 <!--  -->
 <div class="node">
+<a name="socket-directory"></a>
 <p><hr>
-<a name="name-and-database"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#attributes">attributes</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#name-and-database">name and database</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
 
 </div>
 
-<h4 class="subsection">1.1.1 name and database</h4>
+<h4 class="subsection">1.1.1 socket directory</h4>
 
-<p><a name="index-directive_002c-name-3"></a><a name="index-directive_002c-database-4"></a>
+<p><a name="index-directive_002c-sockdir-3"></a>
+The <code>sockdir</code> names the directory where the PostgreSQL database
+keeps its connection socket (typically named <samp><span class="file">.s.PGSQL.5432</span></samp>). 
+This should be an absolute filename.  For example:
+
+<pre class="example">     (sockdir . "/usr/local/var/etrack")
+</pre>
+<p>See <a href="#Maintenance">Maintenance</a>, for how to set this value when migrating the
+database from one cluster to another.
+
+<p><strong>NB</strong>: For now, this directive is optional.  However, in the ETRACK
+release after 2011-05-01, it will be mandatory.  Update your configuration
+file as soon as possible to avoid surprises later!
+
+<!--  -->
+<div class="node">
+<a name="name-and-database"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#attributes">attributes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#socket-directory">socket directory</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
+
+</div>
+
+<h4 class="subsection">1.1.2 name and database</h4>
+
+<p><a name="index-directive_002c-name-4"></a><a name="index-directive_002c-database-5"></a>
 The <code>name</code> is a for-human-consumption string that identifies the
 configuration, while the <code>database</code> is the name of the PostgreSQL
 database used to actually keep the data.  The database name is not quoted. 
@@ -129,17 +231,17 @@ For example:
 </pre>
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="attributes"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#query">query</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#name-and-database">name and database</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
 
 </div>
 
-<h4 class="subsection">1.1.2 attributes</h4>
+<h4 class="subsection">1.1.3 attributes</h4>
 
-<p><a name="index-directive_002c-attributes-5"></a>
+<p><a name="index-directive_002c-attributes-6"></a>
 The <code>attributes</code> directive defines the attributes which, in turn, define
 the attribute codes (also known as "attcodes").  Because attcodes are basically
 the first letters of the attribute names, you need to be somewhat careful not
@@ -158,23 +260,23 @@ to define overlapping names.  For example:
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="query"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#attributes">attributes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Configuration-file">Configuration file</a>
 
 </div>
 
-<h4 class="subsection">1.1.3 query</h4>
+<h4 class="subsection">1.1.4 query</h4>
 
-<p><a name="index-directive_002c-query-6"></a>
+<p><a name="index-directive_002c-query-7"></a>
 There are several flavors of query: simple, drill-down and custom.  The first
 two rely solely on the attribute codes.  By default, a simple query is created
 for each of the attributes, so you don't have to define them yourself.
 
-<h5 class="subsubsection">1.1.3.1 Simple Query</h5>
+<h5 class="subsubsection">1.1.4.1 Simple Query</h5>
 
-<p><a name="index-query_002c-simple-7"></a><a name="index-simple-query-8"></a>The simple query has the form:
+<p><a name="index-query_002c-simple-8"></a><a name="index-simple-query-9"></a>The simple query has the form:
 
 <pre class="example">     (query . (simple "DESCRIPTION" QUERY-CODE))
      (query . (simple-list "DESC-1" Q-CODE-1 "DESC-2" Q-CODE-2 ...))
@@ -192,9 +294,9 @@ and may include embedded spaces.  For example:
                "food not fun"        f!e
                ))
 </pre>
-<h5 class="subsubsection">1.1.3.2 Drill-Down Query</h5>
+<h5 class="subsubsection">1.1.4.2 Drill-Down Query</h5>
 
-<p><a name="index-query_002c-drill_002ddown-9"></a><a name="index-drill_002ddown-query-10"></a>The drill-down query has the form:
+<p><a name="index-query_002c-drill_002ddown-10"></a><a name="index-drill_002ddown-query-11"></a>The drill-down query has the form:
 
 <pre class="example">     (query . (drill-down ATTRIBUTE (DETAILS ...)))
      (query . (drill-down-list CAT-1 (DET-1 ...) CAT-2 (DET-2 ...) ...))
@@ -215,9 +317,9 @@ For example:
                         "moto"
                         "bike")))
 </pre>
-<h5 class="subsubsection">1.1.3.3 Custom Query</h5>
+<h5 class="subsubsection">1.1.4.3 Custom Query</h5>
 
-<p><a name="index-query_002c-custom-11"></a><a name="index-custom-query-12"></a>Lastly, the custom query has the form:
+<p><a name="index-query_002c-custom-12"></a><a name="index-custom-query-13"></a>Lastly, the custom query has the form:
 
 <pre class="example">     (query . (custom "DESCRIPTION" QUERY-THUNK))
 </pre>
@@ -227,7 +329,7 @@ finish with a query using either <code>select</code>
 or <code>one-row-table-query</code>.
 
 <div class="defun">
-&mdash; Scheme Procedure: <b>one-row-table-query</b><var> labels vals<a name="index-one_002drow_002dtable_002dquery-13"></a></var><br>
+&mdash; Scheme Procedure: <b>one-row-table-query</b><var> labels vals<a name="index-one_002drow_002dtable_002dquery-14"></a></var><br>
 <blockquote><p>Return a result comprising two rows formed from <var>labels</var> and <var>vals</var>. 
 This object satisfies <code>pg-result?</code>. 
 </p></blockquote></div>
@@ -246,8 +348,8 @@ ETRACK operation (see <a href="#Query-command">Query command</a>).
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Database-setup"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Environment">Environment</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Configuration-file">Configuration file</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
@@ -256,7 +358,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
 
 <h3 class="section">1.2 Database setup</h3>
 
-<p><a name="index-Database-setup-14"></a>
+<p><a name="index-Database-setup-15"></a>
 This section lists various shell commands to accomplish database related
 tasks.  Of primary importance in setup phase is creating a database and
 granting users access to it.  Before you do that, make sure the configuration
@@ -279,8 +381,8 @@ is in regular use.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Environment"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Customization">Customization</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Database-setup">Database setup</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
@@ -289,7 +391,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
 
 <h3 class="section">1.3 Environment</h3>
 
-<p><a name="index-Environment-15"></a>
+<p><a name="index-Environment-16"></a>
 The last setup step is to set the environment variable <var>ETRACK_CONFIG</var> to
 point to the the configuration file you created or modified, as described in
 the previous section (see <a href="#Configuration-file">Configuration file</a>).  Supposing you name this
@@ -322,8 +424,8 @@ be simply &ldquo;emacs&rdquo;.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Customization"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment">Environment</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
 
@@ -331,7 +433,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Setup">Setup</a>
 
 <h3 class="section">1.4 Customization</h3>
 
-<p><a name="index-Customization-16"></a>
+<p><a name="index-Customization-17"></a>
 When ETRACK starts, it looks for file <code>~/.etrack.el</code> and loads it.  This
 allows you to customize the behavior of ETRACK (somewhat) and Emacs (more so). 
 Here is a complete example:
@@ -361,8 +463,8 @@ in an already running Emacs session.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Session"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Diary-Import">Diary Import</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Setup">Setup</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -371,7 +473,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">2 Session</h2>
 
-<p><a name="index-Session-17"></a>
+<p><a name="index-Session-18"></a>
 There are two ways to start ETRACK:
 
      <ul>
@@ -389,7 +491,7 @@ buffer instead of starting a new session.  In this case, Emacs also
 displays &lsquo;<samp><span class="samp">(Resuming already-active session)</span></samp>&rsquo; in the echo area. 
 </ul>
 
-<p><a name="index-Main-menu-18"></a>If you have more than one configuration specified, ETRACK
+<p><a name="index-Main-menu-19"></a>If you have more than one configuration specified, ETRACK
 asks you to choose one of them.  After this is decided,
 ETRACK clears the screen and displays the main menu:
 
@@ -449,8 +551,8 @@ after this letter.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Query-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Add-command">Add command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
@@ -458,7 +560,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.1 Query command</h3>
 
-<p><a name="index-Query-command-19"></a>
+<p><a name="index-Query-command-20"></a>
 The Query command is used to query the database and display the result.
 
 <p>ETRACK displays the query menu.  Select one by typing the number associated
@@ -484,8 +586,8 @@ into View mode anyway.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Add-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Delete-command">Delete command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Query-command">Query command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -494,7 +596,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.2 Add command</h3>
 
-<p><a name="index-Add-command-20"></a>
+<p><a name="index-Add-command-21"></a>
 The Add command is used to add an expense entry.
 
 <p>ETRACK prompts you for an amount, a date, one or more attribute codes, and zero
@@ -521,8 +623,8 @@ used as the default.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Delete-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Update-command">Update command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-command">Add command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -531,7 +633,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.3 Delete command</h3>
 
-<p><a name="index-Delete-command-21"></a>
+<p><a name="index-Delete-command-22"></a>
 The Delete command is used to delete an expense entry.
 
 <p>ETRACK prompts you for an entry index number and deletes that entry, no
@@ -542,8 +644,8 @@ can find out an entry's index number by looking at the first column of a query
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Update-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Prune-duplicates-command">Prune duplicates command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Delete-command">Delete command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -552,7 +654,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.4 Update command</h3>
 
-<p><a name="index-Update-command-22"></a>
+<p><a name="index-Update-command-23"></a>
 The Update command is used to modify one or more expense entries.  The precise
 mechanism depends on whether or not there are marked entries (see <a href="#View-mode">View mode</a>).  If no entries are marked, update is done one entry at a time. 
 Otherwise, the marked entries can be edited and updated more or less in
@@ -565,8 +667,8 @@ parallel.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Updating-one-entry-at-a-time"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Updating-marked-entries">Updating marked entries</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Update-command">Update command</a>
 
@@ -597,8 +699,8 @@ version of ETRACK.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Updating-marked-entries"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Updating-one-entry-at-a-time">Updating one entry at a time</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Update-command">Update command</a>
 
@@ -628,8 +730,8 @@ last step.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Prune-duplicates-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Template-commands">Template commands</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Update-command">Update command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -638,7 +740,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.5 Prune duplicates command</h3>
 
-<p><a name="index-Prune-duplicates-command-23"></a>
+<p><a name="index-Prune-duplicates-command-24"></a>
 The Prune duplicates command is used to examine and prune (possible) duplicate
 entries.  See <a href="#Query-command">Query command</a>, for the "(possible duplicates)" query.
 
@@ -665,8 +767,8 @@ View mode (see <a href="#View-mode">View mode</a>).
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Template-commands"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Calendar-display-command">Calendar display command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Prune-duplicates-command">Prune duplicates command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -675,7 +777,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.6 Template commands</h3>
 
-<p><a name="index-TEmplate-commands-24"></a>
+<p><a name="index-TEmplate-commands-25"></a>
 A <dfn>template</dfn> is a partially completed entry that can be used to initialize
 new entries.  Unlike normal entries which have a numeric
 identification number, each tempate has a unique <dfn>name</dfn>, instead.  Another
@@ -692,8 +794,8 @@ currently selected) as well as edit the available templates.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Add-Using-Template-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-templates">Editing templates</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</a>
 
@@ -701,7 +803,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</
 
 <h4 class="subsection">2.6.1 Add Using Template command</h4>
 
-<p><a name="index-Add-Using-Template-command-25"></a>
+<p><a name="index-Add-Using-Template-command-26"></a>
 The Add Using Template command sets the <dfn>current template</dfn> and
 collects entries to add using it.  You can also add without any template
 (see <a href="#Add-command">Add command</a>). 
@@ -716,8 +818,8 @@ next time this command is invoked.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Editing-templates"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-Using-Template-command">Add Using Template command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</a>
 
@@ -725,7 +827,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Template-commands">Template commands</
 
 <h4 class="subsection">2.6.2 Editing templates</h4>
 
-<p><a name="index-Editing-templates-26"></a>
+<p><a name="index-Editing-templates-27"></a>
 The Edit templates command prompts you to choose a template to edit.  You can
 type &lt;TAB&gt; to see a list of available template names, and also do
 completion on partial input.  If you specify a name not in the list, a new
@@ -744,8 +846,8 @@ finish editing.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Calendar-display-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Mail-session-log-command">Mail session log command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Template-commands">Template commands</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -754,7 +856,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.7 Calendar display command</h3>
 
-<p><a name="index-Calendar-display-command-27"></a>
+<p><a name="index-Calendar-display-command-28"></a>
 The Calendar display command displays a calendar (wow!).
 
 <p>ETRACK prompts you for a month to display.  Type a month number, or a month
@@ -764,8 +866,8 @@ current month.  ETRACK displays the requested month(s) and goes into View mode
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Mail-session-log-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#About-this-program-command">About this program command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Calendar-display-command">Calendar display command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -774,7 +876,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.8 Mail session log command</h3>
 
-<p><a name="index-Mail-session-log-command-28"></a>
+<p><a name="index-Mail-session-log-command-29"></a>
 The Mail session log command mails the session log (up to and including the
 Mail session log command) to someone.
 
@@ -784,8 +886,8 @@ Afterwards, ETRACK goes into View mode (see <a href="#View-mode">View mode</a>).
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="About-this-program-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Export-Data-command">Export Data command</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Mail-session-log-command">Mail session log command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -794,14 +896,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.9 About this program command</h3>
 
-<p><a name="index-About-this-program-command-29"></a>
+<p><a name="index-About-this-program-command-30"></a>
 This command shows some information about ETRACK and goes into View mode
 (see <a href="#View-mode">View mode</a>).
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Export-Data-command"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#View-mode">View mode</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#About-this-program-command">About this program command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
@@ -810,7 +912,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.10 Export Data command</h3>
 
-<p><a name="index-Export-Data-command-30"></a>
+<p><a name="index-Export-Data-command-31"></a>
 This command allows you to export data to a file in tab-separated format,
 i.e., with a tab character between the fields <code>id</code>, <code>date</code>,
 <code>amount</code>, <code>attcode</code>, <code>details</code> (in that order), and also with a
@@ -844,8 +946,8 @@ probably change prior to ETRACK 1.0 release to be more intuitive.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="View-mode"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Export-Data-command">Export Data command</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
@@ -853,7 +955,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Session">Session</a>
 
 <h3 class="section">2.11 View mode</h3>
 
-<p><a name="index-View-mode-31"></a>
+<p><a name="index-View-mode-32"></a>
 You can enter View mode from the main menu by typing <code>v</code>.  Also, some
 commands enter View mode automatically before returning to the main menu.
 
@@ -933,8 +1035,8 @@ is computed automatically in the case of <kbd>x p</kbd>.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Diary-Import"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Maintenance">Maintenance</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Session">Session</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -943,7 +1045,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">3 Diary Import</h2>
 
-<p><a name="index-Bulk-data-import-32"></a><a name="index-Diary-format-33"></a>
+<p><a name="index-Bulk-data-import-33"></a><a name="index-Diary-format-34"></a>
 Aside from interactive usage (see <a href="#Session">Session</a>), it is often more convenient
 to record new entries <dfn>offline</dfn> and then add them in bulk to the database
 at a later time.  This chapter describes the <dfn>diary format</dfn> that ETRACK
@@ -1038,8 +1140,8 @@ you need to do that yourself (see <a href="#Prune-duplicates-command">Prune dupl
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Maintenance"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Design">Design</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Diary-Import">Diary Import</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -1048,7 +1150,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">4 Maintenance</h2>
 
-<p><a name="index-Database-maintenance-34"></a>
+<p><a name="index-Database-maintenance-35"></a>
 Normally, once ETRACK is set up (see <a href="#Setup">Setup</a>), operation is driven in
 large part by the user (see <a href="#Session">Session</a>).  Occasionally, however, there
 arise tasks that require administrator involvement.  This chapter lists
@@ -1065,8 +1167,8 @@ Support&rdquo; in the PostgreSQL documentation.
 
 <h3 class="section">4.1 Available commands</h3>
 
-<p>Some of the following commands are very dangerous, e.g., <code>drop</code> and
-<code>reset</code>.  Be careful with these!  Most require that a configuration
+<p>Some of the following commands can be very dangerous; be careful! 
+Most require that a configuration
 file be specified (see <a href="#Configuration-file">Configuration file</a>).  Two in particular are
 interactive: <code>repl</code> and <code>shell</code>; the rest do their job,
 display their results to stdout, and exit when done.
@@ -1080,7 +1182,6 @@ char-attributes-alist          -- display attributes keyed by char number
 check-config FILE              -- check FILE and summarize, or signal error
 delete-row ROW                 -- delete ROW from the table
 do-nothing                     -- do absolutely nothing at all, truthfully
-drop                           -- drop the expenses table
 dump (FILE TYPE SPEC)          -- dump to FILE based on date or id
 grant USER                     -- grant db access to a USER
 import-diary-file FILE         -- import diary-format data from FILE
@@ -1096,7 +1197,7 @@ query-two-rows (ROW-1 . ROW-2) -- query two rows
 query NUM                      -- submit a query and display the result
 redisplay-last-result-by-month MSPEC -- as advertized
 repl                           -- for use primarily by the emacs front end
-reset                          -- drop and create the db tables
+replicate DIR                  -- copy database to DIR
 revoke USER                    -- revoke db access from a USER
 shell                          -- like repl but w/ prompt and no parens required
 template-munge (OP NAME [ARGS...]) -- add/del/mod a template by NAME
@@ -1116,7 +1217,7 @@ in an alist format.  The alist keys are the table's column names.
 
 <p>Loading data into an existing database:
 
-<pre class="example">     etrack -b reset                  # omit if you just want to append
+<pre class="example">     # NOTE: This does not replace the current data.
      etrack -b load-alist-file DUMP
 </pre>
 <p>Note that the "i" field is not preserved when doing <code>load-alist-file</code>. 
@@ -1126,10 +1227,15 @@ See <a href="#Prune-duplicates-command">Prune duplicates command</a>.
 
 <pre class="example">     etrack -b upgrade-db
 </pre>
+<p>Migrating the database to another cluster (see <a href="#socket-directory">socket directory</a>):
+
+<pre class="example">     etrack -b replicate NEW-DIR
+     sed '/sockdir/s|. ".*"|. "NEW-DIR"|' CONFIG-FILE &gt; NEW-CONFIG-FILE
+</pre>
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Design"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#License">License</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Maintenance">Maintenance</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -1138,7 +1244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">5 Design</h2>
 
-<p><a name="index-Innards-35"></a>
+<p><a name="index-Innards-36"></a>
 This chapter describes some of the innards of ETRACK.  The programmer hopes
 these explanations are clear enough to reference, critique and improve upon,
 later.
@@ -1150,8 +1256,8 @@ later.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="DB"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#App">App</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
 
@@ -1159,7 +1265,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
 
 <h3 class="section">5.1 DB</h3>
 
-<p><a name="index-DB-Innards-36"></a><a name="index-Innards_002c-DB-37"></a>
+<p><a name="index-DB-Innards-37"></a><a name="index-Innards_002c-DB-38"></a>
 
 <h4 class="subsection">5.1.1 Quick History</h4>
 
@@ -1204,8 +1310,8 @@ a distinct possibility for the future.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="App"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#DB">DB</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
 
@@ -1213,7 +1319,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Design">Design</a>
 
 <h3 class="section">5.2 App</h3>
 
-<p><a name="index-App-Innards-38"></a><a name="index-Innards_002c-App-39"></a>
+<p><a name="index-App-Innards-39"></a><a name="index-Innards_002c-App-40"></a>
 From the user's point of view, the application is a single command from Emacs:
 <code>M-x etrack</code>.  This used to start a big synchronous event loop (with many
 small internal event loops) described in <a href="#Session">Session</a>.  Nowadays, we use the
@@ -1233,8 +1339,8 @@ numerical safety in the frontend input routines.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="License"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Index">Index</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Design">Design</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -1243,7 +1349,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">6 License</h2>
 
-<p><a name="index-License-40"></a>
+<p><a name="index-License-41"></a>
 ETRACK is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
@@ -1261,8 +1367,8 @@ Boston, MA  02110-1301  USA.
 
 <!--  -->
 <div class="node">
-<p><hr>
 <a name="Index"></a>
+<p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#License">License</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -1271,131 +1377,46 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h2 class="unnumbered">Index</h2>
 
 <ul class="index-cp" compact>
-<li><a href="#index-About-this-program-command-29">About this program command</a>: <a href="#About-this-program-command">About this program command</a></li>
-<li><a href="#index-Add-command-20">Add command</a>: <a href="#Add-command">Add command</a></li>
-<li><a href="#index-Add-Using-Template-command-25">Add Using Template command</a>: <a href="#Add-Using-Template-command">Add Using Template command</a></li>
-<li><a href="#index-App-Innards-38">App Innards</a>: <a href="#App">App</a></li>
-<li><a href="#index-Bulk-data-import-32">Bulk data import</a>: <a href="#Diary-Import">Diary Import</a></li>
-<li><a href="#index-Calendar-display-command-27">Calendar display command</a>: <a href="#Calendar-display-command">Calendar display command</a></li>
+<li><a href="#index-About-this-program-command-30">About this program command</a>: <a href="#About-this-program-command">About this program command</a></li>
+<li><a href="#index-Add-command-21">Add command</a>: <a href="#Add-command">Add command</a></li>
+<li><a href="#index-Add-Using-Template-command-26">Add Using Template command</a>: <a href="#Add-Using-Template-command">Add Using Template command</a></li>
+<li><a href="#index-App-Innards-39">App Innards</a>: <a href="#App">App</a></li>
+<li><a href="#index-Bulk-data-import-33">Bulk data import</a>: <a href="#Diary-Import">Diary Import</a></li>
+<li><a href="#index-Calendar-display-command-28">Calendar display command</a>: <a href="#Calendar-display-command">Calendar display command</a></li>
 <li><a href="#index-Configuration-file-2">Configuration file</a>: <a href="#Configuration-file">Configuration file</a></li>
-<li><a href="#index-custom-query-12">custom query</a>: <a href="#query">query</a></li>
-<li><a href="#index-Customization-16">Customization</a>: <a href="#Customization">Customization</a></li>
-<li><a href="#index-Database-maintenance-34">Database maintenance</a>: <a href="#Maintenance">Maintenance</a></li>
-<li><a href="#index-Database-setup-14">Database setup</a>: <a href="#Database-setup">Database setup</a></li>
-<li><a href="#index-DB-Innards-36">DB Innards</a>: <a href="#DB">DB</a></li>
-<li><a href="#index-Delete-command-21">Delete command</a>: <a href="#Delete-command">Delete command</a></li>
-<li><a href="#index-Diary-format-33">Diary format</a>: <a href="#Diary-Import">Diary Import</a></li>
-<li><a href="#index-directive_002c-attributes-5">directive, attributes</a>: <a href="#attributes">attributes</a></li>
-<li><a href="#index-directive_002c-database-4">directive, database</a>: <a href="#name-and-database">name and database</a></li>
-<li><a href="#index-directive_002c-name-3">directive, name</a>: <a href="#name-and-database">name and database</a></li>
-<li><a href="#index-directive_002c-query-6">directive, query</a>: <a href="#query">query</a></li>
-<li><a href="#index-drill_002ddown-query-10">drill-down query</a>: <a href="#query">query</a></li>
-<li><a href="#index-Editing-templates-26">Editing templates</a>: <a href="#Editing-templates">Editing templates</a></li>
-<li><a href="#index-Environment-15">Environment</a>: <a href="#Environment">Environment</a></li>
-<li><a href="#index-Export-Data-command-30">Export Data command</a>: <a href="#Export-Data-command">Export Data command</a></li>
-<li><a href="#index-Innards-35">Innards</a>: <a href="#Design">Design</a></li>
-<li><a href="#index-Innards_002c-App-39">Innards, App</a>: <a href="#App">App</a></li>
-<li><a href="#index-Innards_002c-DB-37">Innards, DB</a>: <a href="#DB">DB</a></li>
-<li><a href="#index-License-40">License</a>: <a href="#License">License</a></li>
-<li><a href="#index-Mail-session-log-command-28">Mail session log command</a>: <a href="#Mail-session-log-command">Mail session log command</a></li>
-<li><a href="#index-Main-menu-18">Main menu</a>: <a href="#Session">Session</a></li>
-<li><a href="#index-Prune-duplicates-command-23">Prune duplicates command</a>: <a href="#Prune-duplicates-command">Prune duplicates command</a></li>
-<li><a href="#index-Query-command-19">Query command</a>: <a href="#Query-command">Query command</a></li>
-<li><a href="#index-query_002c-custom-11">query, custom</a>: <a href="#query">query</a></li>
-<li><a href="#index-query_002c-drill_002ddown-9">query, drill-down</a>: <a href="#query">query</a></li>
-<li><a href="#index-query_002c-simple-7">query, simple</a>: <a href="#query">query</a></li>
-<li><a href="#index-Session-17">Session</a>: <a href="#Session">Session</a></li>
+<li><a href="#index-custom-query-13">custom query</a>: <a href="#query">query</a></li>
+<li><a href="#index-Customization-17">Customization</a>: <a href="#Customization">Customization</a></li>
+<li><a href="#index-Database-maintenance-35">Database maintenance</a>: <a href="#Maintenance">Maintenance</a></li>
+<li><a href="#index-Database-setup-15">Database setup</a>: <a href="#Database-setup">Database setup</a></li>
+<li><a href="#index-DB-Innards-37">DB Innards</a>: <a href="#DB">DB</a></li>
+<li><a href="#index-Delete-command-22">Delete command</a>: <a href="#Delete-command">Delete command</a></li>
+<li><a href="#index-Diary-format-34">Diary format</a>: <a href="#Diary-Import">Diary Import</a></li>
+<li><a href="#index-directive_002c-attributes-6">directive, attributes</a>: <a href="#attributes">attributes</a></li>
+<li><a href="#index-directive_002c-database-5">directive, database</a>: <a href="#name-and-database">name and database</a></li>
+<li><a href="#index-directive_002c-name-4">directive, name</a>: <a href="#name-and-database">name and database</a></li>
+<li><a href="#index-directive_002c-query-7">directive, query</a>: <a href="#query">query</a></li>
+<li><a href="#index-directive_002c-sockdir-3">directive, sockdir</a>: <a href="#socket-directory">socket directory</a></li>
+<li><a href="#index-drill_002ddown-query-11">drill-down query</a>: <a href="#query">query</a></li>
+<li><a href="#index-Editing-templates-27">Editing templates</a>: <a href="#Editing-templates">Editing templates</a></li>
+<li><a href="#index-Environment-16">Environment</a>: <a href="#Environment">Environment</a></li>
+<li><a href="#index-Export-Data-command-31">Export Data command</a>: <a href="#Export-Data-command">Export Data command</a></li>
+<li><a href="#index-Innards-36">Innards</a>: <a href="#Design">Design</a></li>
+<li><a href="#index-Innards_002c-App-40">Innards, App</a>: <a href="#App">App</a></li>
+<li><a href="#index-Innards_002c-DB-38">Innards, DB</a>: <a href="#DB">DB</a></li>
+<li><a href="#index-License-41">License</a>: <a href="#License">License</a></li>
+<li><a href="#index-Mail-session-log-command-29">Mail session log command</a>: <a href="#Mail-session-log-command">Mail session log command</a></li>
+<li><a href="#index-Main-menu-19">Main menu</a>: <a href="#Session">Session</a></li>
+<li><a href="#index-Prune-duplicates-command-24">Prune duplicates command</a>: <a href="#Prune-duplicates-command">Prune duplicates command</a></li>
+<li><a href="#index-Query-command-20">Query command</a>: <a href="#Query-command">Query command</a></li>
+<li><a href="#index-query_002c-custom-12">query, custom</a>: <a href="#query">query</a></li>
+<li><a href="#index-query_002c-drill_002ddown-10">query, drill-down</a>: <a href="#query">query</a></li>
+<li><a href="#index-query_002c-simple-8">query, simple</a>: <a href="#query">query</a></li>
+<li><a href="#index-Session-18">Session</a>: <a href="#Session">Session</a></li>
 <li><a href="#index-Setup-1">Setup</a>: <a href="#Setup">Setup</a></li>
-<li><a href="#index-simple-query-8">simple query</a>: <a href="#query">query</a></li>
-<li><a href="#index-TEmplate-commands-24">TEmplate commands</a>: <a href="#Template-commands">Template commands</a></li>
-<li><a href="#index-Update-command-22">Update command</a>: <a href="#Update-command">Update command</a></li>
-<li><a href="#index-View-mode-31">View mode</a>: <a href="#View-mode">View mode</a></li>
+<li><a href="#index-simple-query-9">simple query</a>: <a href="#query">query</a></li>
+<li><a href="#index-TEmplate-commands-25">TEmplate commands</a>: <a href="#Template-commands">Template commands</a></li>
+<li><a href="#index-Update-command-23">Update command</a>: <a href="#Update-command">Update command</a></li>
+<li><a href="#index-View-mode-32">View mode</a>: <a href="#View-mode">View mode</a></li>
 </ul><!--  -->
-
-<div class="shortcontents">
-<h2>Short Contents</h2>
-<ul>
-<li><a href="#toc_Top">ETRACK</a></li>
-<li><a href="#toc_Setup">1 Setup</a></li>
-<li><a href="#toc_Session">2 Session</a></li>
-<li><a href="#toc_Diary-Import">3 Diary Import</a></li>
-<li><a href="#toc_Maintenance">4 Maintenance</a></li>
-<li><a href="#toc_Design">5 Design</a></li>
-<li><a href="#toc_License">6 License</a></li>
-<li><a href="#toc_Index">Index</a></li>
-</ul>
-</div>
-
-<div class="contents">
-<h2>Table of Contents</h2>
-<ul>
-<li><a name="toc_Top" href="#Top">ETRACK</a>
-<li><a name="toc_Setup" href="#Setup">1 Setup</a>
-<ul>
-<li><a href="#Configuration-file">1.1 Configuration file</a>
-<ul>
-<li><a href="#name-and-database">1.1.1 name and database</a>
-<li><a href="#attributes">1.1.2 attributes</a>
-<li><a href="#query">1.1.3 query</a>
-<ul>
-<li><a href="#query">1.1.3.1 Simple Query</a>
-<li><a href="#query">1.1.3.2 Drill-Down Query</a>
-<li><a href="#query">1.1.3.3 Custom Query</a>
-</li></ul>
-</li></ul>
-<li><a href="#Database-setup">1.2 Database setup</a>
-<li><a href="#Environment">1.3 Environment</a>
-<li><a href="#Customization">1.4 Customization</a>
-</li></ul>
-<li><a name="toc_Session" href="#Session">2 Session</a>
-<ul>
-<li><a href="#Query-command">2.1 Query command</a>
-<li><a href="#Add-command">2.2 Add command</a>
-<ul>
-<li><a href="#Add-command">2.2.1 Restart</a>
-</li></ul>
-<li><a href="#Delete-command">2.3 Delete command</a>
-<li><a href="#Update-command">2.4 Update command</a>
-<ul>
-<li><a href="#Updating-one-entry-at-a-time">2.4.1 Updating one entry at a time</a>
-<li><a href="#Updating-marked-entries">2.4.2 Updating marked entries</a>
-</li></ul>
-<li><a href="#Prune-duplicates-command">2.5 Prune duplicates command</a>
-<li><a href="#Template-commands">2.6 Template commands</a>
-<ul>
-<li><a href="#Add-Using-Template-command">2.6.1 Add Using Template command</a>
-<li><a href="#Editing-templates">2.6.2 Editing templates</a>
-</li></ul>
-<li><a href="#Calendar-display-command">2.7 Calendar display command</a>
-<li><a href="#Mail-session-log-command">2.8 Mail session log command</a>
-<li><a href="#About-this-program-command">2.9 About this program command</a>
-<li><a href="#Export-Data-command">2.10 Export Data command</a>
-<li><a href="#View-mode">2.11 View mode</a>
-</li></ul>
-<li><a name="toc_Diary-Import" href="#Diary-Import">3 Diary Import</a>
-<ul>
-<li><a href="#Diary-Import">3.1 Diary Format</a>
-<li><a href="#Diary-Import">3.2 Importing Diary Format Data</a>
-</li></ul>
-<li><a name="toc_Maintenance" href="#Maintenance">4 Maintenance</a>
-<ul>
-<li><a href="#Maintenance">4.1 Available commands</a>
-<li><a href="#Maintenance">4.2 Usage examples</a>
-</li></ul>
-<li><a name="toc_Design" href="#Design">5 Design</a>
-<ul>
-<li><a href="#DB">5.1 DB</a>
-<ul>
-<li><a href="#DB">5.1.1 Quick History</a>
-<li><a href="#DB">5.1.2 ETRACK Meta Info</a>
-<li><a href="#DB">5.1.3 Column Definitions for <code>expenses</code></a>
-</li></ul>
-<li><a href="#App">5.2 App</a>
-</li></ul>
-<li><a name="toc_License" href="#License">6 License</a>
-<li><a name="toc_Index" href="#Index">Index</a>
-</li></ul>
-</div>
-
 </body></html>
 

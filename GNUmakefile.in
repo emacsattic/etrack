@@ -1,6 +1,6 @@
 # GNUmakefile for etrack
 
-# Copyright (C) 2001-2009 Thien-Thi Nguyen
+# Copyright (C) 2001-2009, 2011 Thien-Thi Nguyen
 # This file is part of ETRACK, released under GNU GPL with
 # ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -107,6 +107,7 @@ install:
 	$(INSTALL_DATA) example.* NEWS $(pkg-datadir)
 	( cd $(pkg-datadir) && rm -f $(retired) )
 	$(RM) $(IOK).*
+	$(RM) -r $(pkg-datadir)/commands
 	$(mkinstalldirs) $(pkg-datadir)/commands
 	for f in commands/*.scm ; do				\
 	  echo ' '$(INSTALL_DATA) $$f $(pkg-datadir)/$$f ;	\
@@ -114,12 +115,22 @@ install:
 	$(INSTALL_DATA) etrack.info $(infodir)
 
 #-----------------------------------------------------------------------------
+# Usage: make uninstall
+# This deletes the files created by "make install".
+
+uninstall:
+	$(RM) $(bindir)/etrack
+	$(RM) $(lispdir)/etrack.el
+	$(RM) -r $(pkg-datadir)
+	$(RM) $(infodir)/etrack.info
+
+#-----------------------------------------------------------------------------
 # Usage: make dist
 # This creates ./TARNAME-VERSION.tar.gz, where TARNAME and VERSION
 # are determined at configuration time.
 
 dd = $(TARNAME)-$(VERSION)
-extradist = COPYING INSTALL aclocal.m4 modules.af.m4 \
+extradist = INSTALL aclocal.m4 modules.af.m4 \
 		configure install-sh etrack.info etrack.html
 minusdist = .gitignore
 

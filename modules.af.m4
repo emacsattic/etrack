@@ -1,5 +1,6 @@
 AC_DEFUN([AUTOFRISK_CHECKS],[
 
+GUILE_MODULE_REQUIRED(ttn-do zzz ciabattone)
 GUILE_MODULE_REQUIRED(ice-9 accumulate)
 GUILE_MODULE_REQUIRED(ice-9 format)
 GUILE_MODULE_REQUIRED(ice-9 common-list)
@@ -14,6 +15,7 @@ GUILE_MODULE_REQUIRED(database postgres)
 GUILE_MODULE_REQUIRED(database postgres-col-defs)
 GUILE_MODULE_REQUIRED(ice-9 editing-buffer)
 GUILE_MODULE_REQUIRED(ice-9 gap-buffer)
+GUILE_MODULE_REQUIRED(ttn-do zzz filesystem)
 GUILE_MODULE_REQUIRED(ice-9 rdelim)
 GUILE_MODULE_REQUIRED(database postgres-types)
 GUILE_MODULE_REQUIRED(database postgres-meta)

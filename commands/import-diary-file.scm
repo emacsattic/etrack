@@ -1,6 +1,6 @@
 ;;; import-diary-file.scm --- import diary-format data from FILE
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -93,34 +93,34 @@
          (tbi (list #f))                ; to be inserted
          (tp tbi))
     ;; first pass: collect and flag errors
-    (fso "etrack: Validating ~A ... please wait.\n" file)
+    (fso "etrack: Validating ~A ... please wait.~%" file)
     (validate/collect buf tp)
     (cond ((editing-buffer buf (= 1 (point-min) (point-max))))
           (else
-           (fso "~A\n~A\n\n~A"
+           (fso "~A~%~A~%~%~A"
                 "etrack: Sorry, no entries added to the database due to"
                 "        errors encountered in the following lines:"
                 (editing-buffer buf (buffer-string)))
-           (fso "etrack: ~A\n\t~A\n\t~A\n\t~A~A:\n"
+           (fso "etrack: ~A~%\t~A~%\t~A~%\t~A~A:~%"
                 "Please correct the errors and try again. Hints:"
                 "- `date' format: YYYY-MM-DD"
                 "- `amount' format: -ABCDE.FG (\"-\" is optional)"
                 "- valid `attcodes' for " *name*)
-           (fso "~:{\t\t~A\t~A\n~}" (map list *attcodes* *attributes*))
-           (fso "\t- `details' are ~A\n\t  - ~A\n\t  - ~A\n"
+           (fso "~:{\t\t~A\t~A~%~}" (map list *attcodes* *attributes*))
+           (fso "\t- `details' are ~A~%\t  - ~A~%\t  - ~A~%"
                 "one or more strings"
                 "each string starts and ends with double-quote"
                 "no leading/trailing spaces (internal spaces are ok)")
-           (fso "\t  - example: ~S ~S ~S\n"
+           (fso "\t  - example: ~S ~S ~S~%"
                 "first" "second detail" "third and last detail")
-           (exit #f)))
+           (all-done #f)))
     ;; second pass: do the inserts
     (set! tbi (cdr tbi))
-    (fso "etrack: ~A new entries. Starting import ...\n" (length tbi))
+    (fso "etrack: ~A new entries. Starting import ...~%" (length tbi))
     (for-each (lambda (new)
                 (fso "insert: ~S => " new)
                 (process-command `(insert ,new)))
               tbi)
-    (fso "etrack: Import from ~A finished!\n" file)))
+    (fso "etrack: Import from ~A finished!~%" file)))
 
 ;;; import-diary-file.scm ends here

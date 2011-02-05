@@ -1,6 +1,6 @@
 ;;; dump.scm --- dump to FILE based on date or id
 
-;; Copyright (C) 2007-2009 Thien-Thi Nguyen
+;; Copyright (C) 2007-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -84,6 +84,6 @@
                                     (else (error "bad type:" type)))
                           #:order-by o:date)
                        filename)
-          (fso "~A)\n" (stat:size (stat filename))))))
+          (fso "~A)~%" (stat:size (stat filename))))))
 
 ;;; dump.scm ends here

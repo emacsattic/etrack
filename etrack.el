@@ -1,6 +1,6 @@
 ;;; etrack.el --- expense tracking user interface
 
-;; Copyright (C) 2001-2009 Thien-Thi Nguyen
+;; Copyright (C) 2001-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -32,16 +32,21 @@
     (iso-8859-16 . "LATIN10")
     (iso-8859-6 . "ISO_8859_6")
     (iso-latin-1 . "LATIN1")
+    (iso-latin-10 . "LATIN10")
     (iso-latin-2 . "LATIN2")
     (iso-latin-3 . "LATIN3")
     (iso-latin-4 . "LATIN4")
     (iso-latin-5 . "ISO_8859_5")
+    (iso-latin-6 . "LATIN6")
+    (iso-latin-7 . "LATIN7")
     (iso-latin-8 . "ISO_8859_8")
     (iso-latin-9 . "LATIN5")
     (iso-safe . "SQL_ASCII")
     (japanese-iso-8bit . "EUC_JP")
     (japanese-shift-jis . "SJIS")
     (korean-iso-8bit . "EUC_KR")
+    (us-ascii . "SQL_ASCII")
+    (utf-8 . "UNICODE")
     (vietnamese-tcvn . "TCVN")
     (windows-1250 . "WIN1250")
     (windows-1251 . "WIN")

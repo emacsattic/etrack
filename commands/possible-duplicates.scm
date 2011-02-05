@@ -1,6 +1,6 @@
 ;;; possible-duplicates.scm --- display single list of possible duplicates
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -19,7 +19,7 @@
              (dups (list)))
     (if (null? all)
         (begin
-          (fso "~A\n" (if (null? dups)
+          (fso "~A~%" (if (null? dups)
                           "[]"          ; for --etrack-cmd:prune-duplicates
                           dups))
           dups)                         ; rv

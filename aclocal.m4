@@ -1,7 +1,7 @@
-# generated automatically by aclocal 1.10.1 -*- Autoconf -*-
+# generated automatically by aclocal 1.11.1 -*- Autoconf -*-
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
-# 2005, 2006, 2007, 2008  Free Software Foundation, Inc.
+# 2005, 2006, 2007, 2008, 2009  Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -151,13 +151,13 @@ AC_DEFUN([GUILE_SITE_DIR],
  [AC_REQUIRE([GUILE_PROGS])dnl
   AC_CACHE_CHECK([for Guile site directory],[guile_cv_SITE],[
   # Try built-in reprefixing.
-  GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info scheme_site_dir 2>/dev/null`
+  GUILE_SITE=`[$GUILE_CONFIG] re-prefix-info pkgdatadir 2>/dev/null`
   # If no joy, do it "manually".
   if test x"$GUILE_SITE" = x ; then
     GUILE_SITE=`[$GUILE_CONFIG] info prefix`
     GUILE_SITE=`[$GUILE_CONFIG] info pkgdatadir | sed s,$GUILE_SITE,'${prefix}',`
-    GUILE_SITE="$GUILE_SITE/site"
   fi
+  GUILE_SITE="$GUILE_SITE/site"
   # If still no joy, make an educated guess.
   if test x"$GUILE_SITE" = x/site ; then
     GUILE_SITE='${datadir}/guile/site'
@@ -238,6 +238,7 @@ AC_DEFUN([GUILE_PROVIDEDP],
          ])
 
 # {Scheme Module Checks}
+# TODO: Clean up caching, document names.
 
 # GUILE_MODULE_CHECK -- check feature of a Guile Scheme module
 #
@@ -249,12 +250,15 @@ AC_DEFUN([GUILE_PROVIDEDP],
 # @var{featuretest} is an expression acceptable to GUILE_CHECK, q.v.
 # @var{description} is a present-tense verb phrase (passed to AC_MSG_CHECKING).
 #
-AC_DEFUN([GUILE_MODULE_CHECK],
-         [AC_MSG_CHECKING([if $2 $4])
-	  GUILE_CHECK($1,[(use-modules $2) (exit ((lambda () $3)))])
-	  if test "$$1" = "0" ; then $1=yes ; else $1=no ; fi
-          AC_MSG_RESULT($$1)
-         ])
+AC_DEFUN([GUILE_MODULE_CHECK],[
+AS_VAR_PUSHDEF([cv],[guile_cv_$1])dnl
+AC_CACHE_CHECK([if $2 $4],[cv],[
+  GUILE_CHECK([cv],[(use-modules $2) (exit ((lambda () $3)))])
+  AS_VAR_IF([cv],[0],[cv=yes],[cv=no])
+])
+  $1=$cv
+AS_VAR_POPDEF([cv])dnl
+])
 
 # GUILE_MODULE_AVAILABLE -- check availability of a Guile Scheme module
 #
@@ -264,24 +268,27 @@ AC_DEFUN([GUILE_MODULE_CHECK],
 # @var{var} is a shell variable name to be set to "yes" or "no".
 # @var{module} is a list of symbols, like: @code{(ice-9 common-list)}.
 #
-AC_DEFUN([GUILE_MODULE_AVAILABLE],
-         [GUILE_MODULE_CHECK($1,$2,0,is available)
-         ])
+AC_DEFUN([GUILE_MODULE_AVAILABLE],[
+GUILE_MODULE_CHECK([$1],[$2],[0],[is available])
+])
 
 # GUILE_MODULE_REQUIRED -- fail if a Guile Scheme module is unavailable
 #
 # Usage: GUILE_MODULE_REQUIRED(symlist)
 #
-# Check that the module named by @var{symlist} is available.  If not, fail.
+# Check that the module named by @var{symlist} is available.
+# If not, fail with error message ``required module not found''.
 # @var{symlist} is a list of symbols, WITHOUT surrounding parens,
 # like: @code{ice-9 common-list}.
 #
-AC_DEFUN([GUILE_MODULE_REQUIRED],
-         [GUILE_MODULE_AVAILABLE(ac_guile_module_required, ($1))
-          if test "$ac_guile_module_required" = "no" ; then
-              AC_MSG_ERROR([required guile module not found: ($1)])
-          fi
-         ])
+AC_DEFUN([GUILE_MODULE_REQUIRED],[
+AS_VAR_PUSHDEF([maybe],[module_$1])dnl
+dnl NB: The ‘maybe’ is deliberately unquoted, for the sake of
+dnl ‘GUILE_MODULE_AVAILABLE’, which cannot handle polymorphic vars.
+GUILE_MODULE_AVAILABLE(maybe, ($1))
+AS_VAR_IF([maybe],[no],[AC_MSG_ERROR([required module not found: ($1)])])
+AS_VAR_POPDEF([maybe])dnl
+])
 
 # GUILE_MODULE_EXPORTS -- check if a module exports a variable
 #
@@ -456,9 +463,18 @@ AC_DEFUN([GUILE_C2X_METHOD],[
 #
 # Check for header <guile/modsup.h> using AC_CHECK_HEADERS.
 # If found, define the cpp symbol HAVE_GUILE_MODSUP_H in config.h.
+# This uses @code{AC_CHECK_HEADERS} with the prerequisite (4th arg)
+# set to @code{#include} both @samp{<libguile.h>} and @samp{<guile/gh.h>}.
 #
 AC_DEFUN([GUILE_MODSUP_H],[
-  AC_CHECK_HEADERS([guile/modsup.h])
+  AC_REQUIRE([GUILE_PROGS])dnl
+  saved_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$GUILE_CFLAGS"
+  AC_CHECK_HEADERS([guile/modsup.h],[],[],[[
+#include <libguile.h>
+#include <guile/gh.h>
+]])
+  CPPFLAGS="$saved_CPPFLAGS"
 ])
 
 

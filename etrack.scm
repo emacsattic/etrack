@@ -1,6 +1,6 @@
 ;;; etrack.scm --- expense tracking backend
 
-;; Copyright (C) 2001-2009 Thien-Thi Nguyen
+;; Copyright (C) 2001-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -11,6 +11,7 @@
 ;;; Code:
 
 (define-module (etrack)
+  #:use-module ((ttn-do zzz ciabattone) #:select (cluster-mangler))
   #:use-module ((ice-9 accumulate) #:select (accumulator/one-only
                                              accumulator/counting))
   #:use-module ((ice-9 format) #:select (format))
@@ -29,6 +30,7 @@
   #:use-module ((database postgres-table) #:select (pgtable-worker
                                                     compile-outspec))
   #:use-module ((database postgres) #:select (pg-connectdb
+                                              pg-finish
                                               pg-exec
                                               pg-result-status
                                               pg-result-error-message
@@ -40,6 +42,8 @@
 (define *ETRACK-DATA* "/home/ttn/build/etrack")
 
 (define *client-encoding* #f)           ; string
+
+(define *sockdir* #f)                   ; string
 
 (define *name* #f)                      ; string
 (define *db* #f)                        ; string
@@ -85,6 +89,13 @@
                  (amount  integer)
                  (attcode text)
                  (details text[])))
+    ;; compendium
+    (! #:all-tables (map (lambda (nick)
+                           (define (kw-append suffix)
+                             (symbol->keyword (symbol-append nick suffix)))
+                           (cons (kw-append 'name)
+                                 (kw-append 'defs)))
+                         '(meta e t)))
     ;; rv
     ?))
 
@@ -92,7 +103,6 @@
 
 (define M #f)
 (define last-insert-i #f)
-(define UPDCOL #f)
 
 ;; connection set by `init!'
 
@@ -217,7 +227,7 @@
         (display-result res 'fat-h-only)))
   (cond ((memq 'histogram options)
          => (lambda (ls)
-              (fso "~{~A\n~}"
+              (fso "~{~A~%~}"
                    (annotate:histogram
                     (cadr ls) (caddr ls)
                     (split-on-nl (with-output-to-string >>))))))
@@ -263,7 +273,7 @@
                   ((symbol? query-code) (symbol->string query-code))
                   (else (bad-config-error "bad simple-query code:"
                                           query-code)))))
-    ;;(fso "defining simple query: ~A\n" description)
+    ;;(fso "defining simple query: ~A~%" description)
     (define-double-query description (simple-query-code->pexp qc))))
 
 (define (define-drill-down-queries attribute tags)
@@ -276,7 +286,7 @@
     (define-simple-query (symbol->string attribute) ac)
     (for-each (lambda (tag)
                 (let ((description (fs "~A / ~A" attribute tag)))
-                  ;;(fso "defining drill-down query: ~A\n" description)
+                  ;;(fso "defining drill-down query: ~A~%" description)
                   (define-double-query description
                     `(and ,(simple-query-code->pexp ac)
                           (or (~ details[1] ,tag)
@@ -294,6 +304,17 @@
 (define (one-value expr . query-args)
   (pg-getvalue (apply M #:select `((#f #f ,expr)) query-args) 0 0))
 
+;; mogrification
+
+(define (UPDCOL cols data where-condition)
+  (M #:update-col cols
+     (map (lambda (col x)
+            (if (equal? '(details nil) (list col x))
+                '()
+                x))
+          cols data)
+     where-condition))
+
 ;; configuration
 
 (define (configure conf)
@@ -304,6 +325,10 @@
                         (else (bad "missing or invalid key:" key))))))
     (or (and-map (lambda (x) (and (pair? x) (symbol? (car x)))) conf)
         (bad "configuration not an alist:" conf))
+    ;; ‘sockdir’ is optional for now; in the future it will be required.
+    (and=> (assq-ref conf 'sockdir) (lambda (v) (set! *sockdir* v)))
+    (or (string>? "2011-05-11" (strftime "%Y-%m-%d" (gmtime (current-time))))
+        (error "missing key: sockdir"))
     (check 'name       (lambda (v) (set! *name* v)))
     (check 'database   (lambda (v) (set! *db* (symbol->string v))))
     (check 'attributes (lambda (v)
@@ -321,7 +346,7 @@
     (set! conf (reverse!
                 (pick (lambda (x)
                         (not (memq (car x)
-                                   '(quote database table
+                                   '(quote sockdir database table
                                            attributes name))))
                       conf)))
     (let ((spurious (pick-mappings (lambda (x)
@@ -354,7 +379,7 @@
                                 (set! cq-acc (tmpfile))
                                 (write '(define-module (etrack)) cq-acc)
                                 (newline cq-acc)))
-                   (format cq-acc "~S\n" `(define-query ,@(cdr query))))))
+                   (format cq-acc "~S~%" `(define-query ,@(cdr query))))))
               conf)
     (and cq-acc (seek cq-acc 0 SEEK_SET)
          (let loop ((form (read cq-acc)))
@@ -377,6 +402,10 @@
    (or (getenv "ETRACK_CONFIG")
        (bad-config-error "need to set env var ETRACK_CONFIG"))))
 
+;; the exiting continuation
+
+(define all-done #f)
+
 ;; command dispatch
 
 (define *ALL* '((--help #f #f "display this message and exit succesfully")
@@ -397,19 +426,23 @@
          (delay
            (begin
              (configure (read-etrack-config))
-             (set! CONN (pg-connectdb (fs "dbname=~A" *db*)))
+             (and *sockdir*
+                  ;; If someone else owns the socket directory, don't
+                  ;; even try bringing up the daemon.  If the following
+                  ;; ‘pg-connectdb’ fails, user can go yell at admin.
+                  (access? *sockdir* (logior R_OK W_OK))
+                  (or ((cluster-mangler #f *sockdir*) #:daemon-up)
+                      (error "no daemon for:" *sockdir*)))
+             (set! CONN (pg-connectdb (fs "~Adbname=~A"
+                                          (cond (*sockdir*
+                                                 (fs "host=~A "
+                                                     *sockdir*))
+                                                (else ""))
+                                          *db*)))
              (set! M (pgtable-worker CONN (DK #:ename) (DK #:edefs)))
              (and *client-encoding*
                   (Cfexec "SET SESSION CLIENT_ENCODING TO '~A';"
                           *client-encoding*))
-             (set! UPDCOL (lambda (cols data where-condition)
-                            (M #:update-col cols
-                               (map (lambda (col x)
-                                      (if (equal? '(details nil) (list col x))
-                                          '()
-                                          x))
-                                    cols data)
-                               where-condition)))
              ;; backward compatibility
              (set! select (lambda args (apply M #:select args)))
 
@@ -446,12 +479,12 @@
     (or (if args
             (apply proc args)
             (proc))
-        (exit #f))))
+        (all-done #f))))
 
 (define (process-command cmd)
   (case (car cmd)
     ((quit)
-     (exit 0))
+     (all-done #t))
     (else
      (load-and-dispatch (cons #f cmd)))))
 
@@ -466,12 +499,17 @@
          (set-cdr! cl (cdddr cl))))
   (cond ((or (= 1 (length cl))
              (string=? "--help" (list-ref cl 1)))
-         (fso "Usage: etrack -b [-E CLIENT-ENCODING] CMD [ARG]\n")
+         (fso "Usage: etrack -b [-E CLIENT-ENCODING] CMD [ARG]~%")
          (fso "where CMD is one of:")
          (usage *ALL*))
         (else
          (load-and-dispatch cl))))
 
-(exit (main (command-line)))
+(exit (let ((ev (call-with-current-continuation
+                 (lambda (cc)
+                   (set! all-done cc)
+                   (main (command-line))))))
+        (and CONN (pg-finish CONN))
+        ev))
 
 ;;; etrack.scm ends here

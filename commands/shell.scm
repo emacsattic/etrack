@@ -1,6 +1,6 @@
 ;;; shell.scm --- like repl but w/ prompt and no parens required
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -8,7 +8,7 @@
   #:use-module ((ice-9 rdelim) #:select (read-line)))
 
 (define-command (shell)                 ; init=#t
-  (fso "Enter q to quit, h for help.\n")
+  (fso "Enter q to quit, h for help.~%")
   (error-catching-loop
    (lambda ()
      (repl (lambda (port)

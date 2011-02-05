@@ -1,6 +1,6 @@
 ;;; template-munge.scm --- add/del/mod a template by NAME
 
-;; Copyright (C) 2006-2009 Thien-Thi Nguyen
+;; Copyright (C) 2006-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -26,13 +26,13 @@
       (newline))
     (case (car command)
       ((add)
-       (fso/norepl "adding: ~S\n" name)
+       (fso/norepl "adding: ~S~%" name)
        (report! (tM #:insert-alist `((name . ,name)))))
       ((del)
-       (fso/norepl "deleting: ~S\n" name)
+       (fso/norepl "deleting: ~S~%" name)
        (report! (tM #:delete-rows `(= name ,name))))
       ((mod)
-       (fso/norepl "modifiying: ~S ~S\n" name rest)
+       (fso/norepl "modifiying: ~S ~S~%" name rest)
        (let loop ((ls rest) (cols '()) (data '()))
          (cond ((not (null? ls))
                 (loop (cddr ls) (cons (car ls) cols) (cons (cadr ls) data)))

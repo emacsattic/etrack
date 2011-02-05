@@ -1,3 +1,84 @@
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9913
+
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme] Use "~%" in ‘format’ strings more.
+
+	* about.scm (about): Use "~%" in ‘format’ string, not "\n".
+	* change-attcode.scm (change-attcode): Likewise.
+	* char-attributes-alist.scm (char-attributes-alist): Likewise.
+	* check-config.scm (check-config): Likewise.
+	* delete-row.scm (delete-row): Likewise.
+	* dump.scm (dump): Likewise.
+	* grant.scm (grant): Likewise.
+	* import-diary-file.scm (import-diary-file): Likewise.
+	* initdb.scm (initdb): Likewise.
+	* insert.scm (insert): Likewise.
+	* list-attcodes.scm (list-attcodes): Likewise.
+	* list-queries.scm (list-queries): Likewise.
+	* possible-duplicates.scm (possible-duplicates): Likewise.
+	* query-one-row-alist.scm (query-one-row-alist): Likewise.
+	* query-one-row.scm (query-one-row): Likewise.
+	* query-two-rows.scm (query-two-rows): Likewise.
+	* query.scm (query): Likewise.
+	* redisplay-last-result-by-month.scm
+	(redisplay-last-result-by-month): Likewise.
+	* revoke.scm (revoke): Likewise.
+	* shell.scm (shell): Likewise.
+	* template-munge.scm (template-munge): Likewise.
+	* update-row.scm (update-row): Likewise.
+	* upgrade-db.scm (check-and-upgrade): Likewise.
+
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[db] Make ‘replicate’ usable for non-superuser.
+
+	* replicate.scm: From (database postgres), import
+	‘pg-get-copy-data’, ‘pg-put-copy-data’, ‘pg-put-copy-end’;
+	import ‘(ice-9 rdelim) read-line’.
+	(copy-tables! one!): Rewrite to have client manage
+	COPY data, via a ‘tmpfile’ port, instead of the server.
+
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9912
+
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[int] Decruft: Avoid redundant ‘cluster-mangler’ import.
+
+	* replicate.scm: Don't import ‘cluster-mangler’.
+
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Add support for new config param ‘sockdir’.
+
+	* check-config.scm (check-config): Display ‘sockdir’, too.
+	* initdb.scm: Import ‘(ttn-do zzz filesystem) dir-exists?’.
+	(initdb): If ‘sockdir’ is defined, arrange to pass
+	it, in the form of option ‘-h SOCKDIR’, to createdb(1).
+
+2011-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop commands ‘drop’, ‘reset’.
+
+	* drop.scm: Delete file.
+	* reset.scm: Delete file.
+
+2011-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New command: replicate
+
+	* replicate.scm: New file.
+
+2011-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Properly close db connection on exit.
+
+	* import-diary-file.scm (import-diary-file): Use ‘all-done’.
+
 2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.9911
@@ -474,3 +555,9 @@
 	redisplay-last-result-by-month.scm, rename-catcode-to-attcode.scm,
 	repl.scm, reset.scm, revoke.scm, shell.scm, update-row.scm:
 	New files.
+
+
+Copyright (C) 2010, 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.

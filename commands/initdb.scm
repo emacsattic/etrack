@@ -1,17 +1,27 @@
 ;;; initdb.scm --- initialize database
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
-(define-module (etrack))
+(define-module (etrack)
+  #:use-module ((ttn-do zzz filesystem) #:select (dir-exists?)))
 
 (define-command (initdb)                ; init=#f
   (let* ((prelim (read-etrack-config))
          (db (or (assq-ref prelim 'database)
                  (error "no database specified in config")))
-         (sys-cmd (fs "createdb ~A" db)))
-    (fso "~A\n" sys-cmd)
+         (sockdir (assq-ref prelim 'sockdir))
+         (minus-h (cond ((and sockdir   ; (optional for now)
+                              (not (dir-exists? sockdir))
+                              (cluster-mangler 'new sockdir))
+                         => (lambda (cm)
+                              (or (cm #:daemon-up)
+                                  (error "no daemon for:" sockdir))
+                              (fs " -h ~A" sockdir)))
+                        (else "")))
+         (sys-cmd (fs "createdb~A ~A" minus-h db)))
+    (fso "~A~%" sys-cmd)
     (or (= 0 (system sys-cmd))
         (error "createdb failed for db:" db)))
 
@@ -23,13 +33,13 @@
       (let ((res (apply m rest)))
         (or (eq? 'PGRES_COMMAND_OK (pg-result-status res))
             (error (pg-result-error-message res)))))
-    (fso "~A\n" blurb)
+    (fso "~A~%" blurb)
     (let ((meta-M (pgtable-worker CONN (DK #:metaname) (DK #:metadefs))))
       (do-gingerly meta-M #:create)
       (do-gingerly meta-M #:insert-values
                    "*db-design-version*" (DK #:design-version)))
     (do-gingerly (pgtable-worker CONN (DK #:tname) (DK #:tdefs)) #:create)
     (do-gingerly M #:create)
-    (fso "~A done\n" blurb)))
+    (fso "~A done~%" blurb)))
 
 ;;; initdb.scm ends here

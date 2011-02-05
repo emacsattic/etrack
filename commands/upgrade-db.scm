@@ -1,6 +1,6 @@
 ;;; upgrade-db.scm --- fix old misunderstandings upward-compatibly
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -145,10 +145,10 @@
          (check (car entry))
          (upgrade (cadr entry)))
     (cond ((check)
-           (fso "ok: ~A\n" name))
+           (fso "ok: ~A~%" name))
           ((upgrade)
            (if (check)
-               (fso "ok-after-upgrade: ~A\n" name)
+               (fso "ok-after-upgrade: ~A~%" name)
                (error "upgrade ok but check failed:" name)))
           (else
            (error "upgrade failed:" name)))))

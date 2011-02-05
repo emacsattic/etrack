@@ -1,6 +1,6 @@
 ;;; query.scm --- submit a query and display the result
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -13,10 +13,10 @@
       (let* ((q (list-ref (*queries*) num))
              (name (car q))
              (rv (begin
-                   (fso "~A\n" name)
+                   (fso "~A~%" name)
                    ((cadr q)))))          ;;; application
-        ;;(fso "~A => ~A\n" name rv)
+        ;;(fso "~A => ~A~%" name rv)
         (>>table rv)
-        (fso "EOQ\n\n"))))
+        (fso "EOQ~%~%"))))
 
 ;;; query.scm ends here

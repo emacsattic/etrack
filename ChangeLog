@@ -1,3 +1,112 @@
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9913
+
+	* configure.ac (AC_INIT): Bump version to "0.9913" for release.
+
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Fix bug: Don't bring up daemon if socket directory not rw.
+
+	Omission from 2011-01-30,
+	"Add support for new config param ‘sockdir’".
+
+	* etrack.scm (init!): Only bring up the daemon
+	if we can read and write the socket directory.
+
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Add support for "make uninstall".
+
+	* GNUmakefile.in (uninstall): New target.
+
+2011-01-31  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[scheme] Use "~%" in ‘format’ strings more.
+
+	* etrack.scm (>>table): Use "~%" in ‘format’ string, not "\n".
+	(define-simple-query, define-drill-down-queries)
+	(configure, main): Likewise.
+
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Release: 0.9912
+
+	* configure.ac (AC_INIT): Bump version to "0.9912" for release.
+
+2011-01-30  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Add support for new config param ‘sockdir’.
+
+	* etrack.scm: Import ‘(ttn-do zzz ciabattone) cluster-mangler’.
+	(*sockdir*): New var.
+	(configure): Copy config param ‘sockdir’ to ‘*sockdir*’,
+	if defined; signal error if not defined after 2011-05-11.
+	(init!): If sockdir is defined, bring up the daemon (if necessary),
+	and specify connection parameter ‘host’ to ‘pg-connectdb’.
+	* etrack.texi (Configuration file): Add menu item "socket directory".
+	(socket directory): New node/subsection.
+	(Maintenance): Add db migration example.
+	* example.etrack.conf (sockdir): New param, but quoted out.
+
+2011-01-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[db int] Move ‘UPDCOL’ definition to load-time.
+
+	* etrack.scm (UPDCOL): Define on load, not in ‘init!’.
+
+2011-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Drop commands ‘drop’, ‘reset’.
+
+	* etrack.texi (Maintenance): Don't mention ‘drop’ and ‘reset’.
+	* GNUmakefile.in (install): Delete $(pkg-datadir)/commands
+	prior to creating and populating it.
+
+2011-01-28  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	New command: replicate
+
+	* etrack.scm (DK): Add #:all-tables.
+
+2011-01-26  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Synch coding system map w/ upstream.
+
+	* etrack.el (etrack-coding-map): Synch w/ upstream; add:
+	iso-latin-10, iso-latin-6, iso-latin-7, us-ascii, utf-8.
+
+2011-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	Properly close db connection on exit.
+
+	* etrack.scm: Import ‘(database postgres) pg-finish’.
+	(all-done): New var, to hold the exiting continuation.
+	(process-command): Use ‘all-done’.
+	<top-level>: Init ‘all-done’;
+	on exit, if connected, close connection.
+
+2011-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[maint] Rename configure.in to configure.ac.
+
+	* configure.ac: Rename from configure.in.
+
+2011-01-25  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[maint] Add COPYING to the repository.
+
+	* GNUmakefile.in (extradist): Remove COPYING.
+	* autogen.sh: Don't symlink COPYING.
+	* .gitignore: Delete COPYING.
+	* COPYING: New file.
+
+2009-04-29  Thien-Thi Nguyen  <ttn@gnuvola.org>
+
+	[doc] Move table of contents after the title page.
+
+	* etrack.texi: Move @contents; delete @summarycontents.
+
 2009-04-16  Thien-Thi Nguyen  <ttn@gnuvola.org>
 
 	Release: 0.9911
@@ -1996,3 +2105,8 @@
 
 	* Makefile.in, configure.in: New file.
 
+
+Copyright (C) 2010, 2011 Thien-Thi Nguyen
+
+Copying and distribution of this file, with or without modification,
+are permitted provided the copyright notice and this notice are preserved.

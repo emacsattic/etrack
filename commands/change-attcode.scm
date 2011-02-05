@@ -1,6 +1,6 @@
 ;;; change-attcode.scm --- OLDNEW is one arg of two adjacent chars
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -11,7 +11,7 @@
   (and (symbol? oldnew) (set! oldnew (symbol->string oldnew)))
   (let ((old (substring oldnew 0 1))
         (new (substring oldnew 1 2)))
-    (fso "~A\n"
+    (fso "~A~%"
          (UPDCOL '(attcode)
                  (list
                   ;; eventually, we want to use:

@@ -8,14 +8,14 @@
 
 @include version.texi
 
-@c Copyright (C) 2002-2009 Thien-Thi Nguyen
+@c Copyright (C) 2002-2009, 2011 Thien-Thi Nguyen
 @c This file is part of ETRACK, released under GNU GPL with
 @c ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
 @ifinfo
 This file documents the ETRACK program.
 
-Copyright 2002-2009 Thien-Thi Nguyen
+Copyright 2002-2009, 2011 Thien-Thi Nguyen
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -33,7 +33,7 @@ are preserved on all copies.
 @c  start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002-2009 Thien-Thi Nguyen
+Copyright @copyright{} 2002-2009, 2011 Thien-Thi Nguyen
 
 Published by Thien-Thi Nguyen
 
@@ -41,6 +41,8 @@ Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
 are preserved on all copies.
 @end titlepage
+
+@contents
 
 @c ---------------------------------------------------------------------------
 @ifnottex
@@ -104,10 +106,31 @@ file, which you might find easier to peruse directly, with the shell command
 @code{etrack --display-example-config}.
 
 @menu
+* socket directory::
 * name and database::
 * attributes::
 * query::
 @end menu
+
+@c ---------------------------------------------------------------------------
+@node       socket directory
+@subsection socket directory
+@cindex     directive, sockdir
+
+The @code{sockdir} names the directory where the PostgreSQL database
+keeps its connection socket (typically named @file{.s.PGSQL.5432}).
+This should be an absolute filename.  For example:
+
+@example
+(sockdir . "/usr/local/var/etrack")
+@end example
+
+@xref{Maintenance}, for how to set this value when migrating the
+database from one cluster to another.
+
+@strong{NB}: For now, this directive is optional.  However, in the ETRACK
+release after 2011-05-01, it will be mandatory.  Update your configuration
+file as soon as possible to avoid surprises later!
 
 @c ---------------------------------------------------------------------------
 @node       name and database
@@ -965,8 +988,8 @@ Support'' in the PostgreSQL documentation.
 
 @section Available commands
 
-Some of the following commands are very dangerous, e.g., @code{drop} and
-@code{reset}.  Be careful with these!  Most require that a configuration
+Some of the following commands can be very dangerous; be careful!
+Most require that a configuration
 file be specified (@pxref{Configuration file}).  Two in particular are
 interactive: @code{repl} and @code{shell}; the rest do their job,
 display their results to stdout, and exit when done.
@@ -987,7 +1010,7 @@ in an alist format.  The alist keys are the table's column names.
 Loading data into an existing database:
 
 @example
-etrack -b reset                  # omit if you just want to append
+# NOTE: This does not replace the current data.
 etrack -b load-alist-file DUMP
 @end example
 
@@ -998,6 +1021,13 @@ Upgrading the database schema (@pxref{DB}):
 
 @example
 etrack -b upgrade-db
+@end example
+
+Migrating the database to another cluster (@pxref{socket directory}):
+
+@example
+etrack -b replicate NEW-DIR
+sed '/sockdir/s|. ".*"|. "NEW-DIR"|' CONFIG-FILE > NEW-CONFIG-FILE
 @end example
 
 @c ---------------------------------------------------------------------------
@@ -1117,8 +1147,6 @@ Boston, MA  02110-1301  USA.
 @printindex cp
 
 @c ---------------------------------------------------------------------------
-@summarycontents
-@contents
 @bye
 
 @c etrack.texi ends here

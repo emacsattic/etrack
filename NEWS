@@ -1,5 +1,23 @@
 NEWS for ETRACK
 
+- 0.9913 | 2011-01-31
+  - fix regression: don't try daemon bring-up if not superuser
+  - make ‘replicate’ usable for non-superuser
+  - add "make uninstall"
+
+- 0.9912 | 2011-01-30
+  - dropped commands: drop, reset
+  - new command: replicate
+  - new configuration directive: sockdir
+    - optional now, MANDATORY AFTER 2011-05-01
+    - useful with command ‘replicate’ (see manual)
+  - backend daemon brought up lazily (on demand)
+  - backend closes connection cleanly on session finish
+  - frontend coding system map updated
+    - from http://www.gnuvola.org/data/
+    - new: iso-latin-{6,7,10}, us-ascii, utf-8
+  - minor doc improvements
+
 - 0.9911 | 2009-04-16
   - frontend bugfixes
     - handle error in list `read' more robustly

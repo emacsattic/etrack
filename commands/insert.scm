@@ -1,6 +1,6 @@
 ;;; insert.scm --- insert new data LIST into the table
 
-;; Copyright (C) 2004-2009 Thien-Thi Nguyen
+;; Copyright (C) 2004-2009, 2011 Thien-Thi Nguyen
 ;; This file is part of ETRACK, released under GNU GPL with
 ;; ABSOLUTELY NO WARRANTY.  See the file COPYING for details.
 
@@ -17,6 +17,6 @@
                            (lambda (x) (if (eq? 'nil x) '() x)))
                      ls))))
     (set! last-insert-i (one-value `(currval ,(DK #:iseq))))
-    (fso "~A ~@[~A~]\n" res last-insert-i)))
+    (fso "~A ~@[~A~]~%" res last-insert-i)))
 
 ;;; insert.scm ends here
